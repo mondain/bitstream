@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="ext/ant.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/freemarker.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/groovy.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/jaxen-core.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/jaxen-jdom.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/jdom.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/kxml.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/saxpath.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/simple-upload-0.3.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/velocity.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/xalan.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/xerces.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/xml-apis.jar"/>
+	<classpathentry exported="true" kind="lib" path="jBittorrentAPI.jar"/>
+	<classpathentry exported="true" kind="lib" path="trackerBT.jar"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="build"/>
+</classpath>

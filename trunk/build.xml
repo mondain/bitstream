@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="jbittorrent">
+    <property environment="env"/>
+    <property name="ECLIPSE_HOME" value="../../../Dev Stuff/Java/eclipse-java-galileo-SR1-win32/eclipse"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.6"/>
+    <property name="source" value="1.6"/>
+    <path id="jbittorrent.classpath">
+        <pathelement location="example"/>
+        <pathelement location="ext/ant.jar"/>
+        <pathelement location="ext/freemarker.jar"/>
+        <pathelement location="ext/groovy.jar"/>
+        <pathelement location="ext/jaxen-core.jar"/>
+        <pathelement location="ext/jaxen-jdom.jar"/>
+        <pathelement location="ext/jdom.jar"/>
+        <pathelement location="ext/kxml.jar"/>
+        <pathelement location="ext/saxpath.jar"/>
+        <pathelement location="ext/simple-upload-0.3.4.jar"/>
+        <pathelement location="ext/velocity.jar"/>
+        <pathelement location="ext/xalan.jar"/>
+        <pathelement location="ext/xerces.jar"/>
+        <pathelement location="ext/xml-apis.jar"/>
+        <pathelement location="jBittorrentAPI.jar"/>
+        <pathelement location="trackerBT.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="example"/>
+        <copy includeemptydirs="false" todir="example">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="example"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="example" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="jbittorrent.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="Main">
+        <java classname="sproj.Main" failonerror="true" fork="yes">
+            <classpath refid="jbittorrent.classpath"/>
+        </java>
+    </target>
+</project>
