@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="ext/ant.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/freemarker.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/groovy.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/jaxen-core.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/jaxen-jdom.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/jdom.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/kxml.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/saxpath.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/simple-upload-0.3.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/velocity.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/xalan.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/xerces.jar"/>
-	<classpathentry exported="true" kind="lib" path="ext/xml-apis.jar"/>
-	<classpathentry exported="true" kind="lib" path="jBittorrentAPI.jar"/>
-	<classpathentry exported="true" kind="lib" path="trackerBT.jar"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="output" path="build"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/swt-3.5.1-win32-win32-x86/swt.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/jdom.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/simple-upload-0.3.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/ant.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/freemarker.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/groovy.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/jaxen-core.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/jaxen-jdom.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/kxml.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/saxpath.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/velocity.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/xalan.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/xerces.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/xml-apis.jar"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -43,7 +43,7 @@ import java.io.File;
  * Simple example to show how it is possible to publish a .torrent file to a
  * tracker
  */
-class ExamplePublish{
+public class ExamplePublish{
     public static void main(String[] args){
         if(args.length < 4){
             System.out.println(showHelp());

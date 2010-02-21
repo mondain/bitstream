@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<mapper>
+<lookup>
+<service name="file" type="trackerBT.FileService"/>
+<service name="tracker" type="trackerBT.TrackerService"/>
+<service name="upload" type="trackerBT.UploadService"/>
+</lookup>
+<resolve>
+<match path="/*" name="file"/>
+<match path="/announce*" name="tracker"/>
+<match path="/upload*" name="upload"/>
+</resolve>
+</mapper>
