@@ -37,71 +37,81 @@
 
 package jBittorrentAPI;
 
+import com.aoc.Download;
+
 /**
  * Simple example to show how it is possible to download files using bittorrent
  * protocol with a given .torrent file
  */
 public class ExampleDownloadFiles {
-    
-    
-    
-    DownloadManager dm;
-    
-    public void setExit() {
-    	dm.setExit();
-    }
-    
-    public float getCompleted() {
-    	
-    	if(dm != null) {
-    		//System.out.println("called ExampleDownloadFiles::getCompleted():" + dm.getTotal());
-    		return dm.getTotal();	
-    	}
-    	return 0;
-    	
-    	
-    }
-    
-    public ExampleDownloadFiles() {
-    	
-    }
 
-    
-    public void DownloadFiles(String[] args){
-        try {
-            TorrentProcessor tp = new TorrentProcessor();
+	public DownloadManager dm;
 
-            if(args.length < 1){
-                System.err.println(
-                        "Incorrect use, please provide the path of the torrent file...\r\n" +
-                        "\r\nCorrect use of ExampleDownloadFiles:\r\n"+
-                        "ExampleDownloadFiles torrentPath");
+	public void setExit() {
+		dm.setExit();
+	}
 
-                System.exit(1);
-            }
-            TorrentFile t = tp.getTorrentFile(tp.parseTorrent(args[0]));
-            if(args.length > 1)
-                Constants.SAVEPATH = args[1];
-            if (t != null) {
-            	dm = new DownloadManager(t, Utils.generateID());
-                dm.startListening(6881, 6889);
-                dm.startTrackerUpdate();
-                dm.blockUntilCompletion();
-                dm.stopTrackerUpdate();
-                dm.closeTempFiles();
-            } else {
-                System.err.println(
-                        "Provided file is not a valid torrent file");
-                System.err.flush();
-                System.exit(1);
-            }
-        } catch (Exception e) {
+	public float getCompleted() {
+		if (dm != null) {
+			return dm.getTotal();
+		}
+		return 0;
 
-            System.out.println("Error while processing torrent file. Please restart the client");
-            //e.printStackTrace();
-            System.exit(1);
-        }
+	}
 
-    }
+	public ExampleDownloadFiles() {
 
+	}
+
+	public void DownloadFiles(String[] args) {
+		try {
+			TorrentProcessor tp = new TorrentProcessor();
+
+			if (args.length < 1) {
+				System.err
+						.println("Incorrect use, please provide the path of the torrent file...\r\n"
+								+ "\r\nCorrect use of ExampleDownloadFiles:\r\n"
+								+ "ExampleDownloadFiles torrentPath");
+
+				System.exit(1);
+			}
+			TorrentFile t = tp.getTorrentFile(tp.parseTorrent(args[0]));
+			if (args.length > 1)
+				Constants.SAVEPATH = args[1];
+			if (t != null) {
+				dm = new DownloadManager(t, Utils.generateID());
+				if (this.download != null) {
+					dm.setCurrent(download);
+				}
+				dm.startListening(6881, 6889);
+				dm.startTrackerUpdate();
+				dm.blockUntilCompletion();
+				dm.stopTrackerUpdate();
+				dm.closeTempFiles();
+			} else {
+				System.err.println("Provided file is not a valid torrent file");
+				System.err.flush();
+				System.exit(1);
+			}
+		} catch (Exception e) {
+
+			System.out
+					.println("Error while processing torrent file. Please restart the client");
+			System.exit(1);
+		}
+	}
+
+	private Download download = null;
+
+	public void setCurrent(Download d) {
+		this.download = d;
+	}
+
+	/*
+	public static ExampleDownloadFiles getInstance() {
+		if(INSTANCE==null) {
+			INSTANCE = new ExampleDownloadFiles();
+		}
+		return INSTANCE;
+	}*/
 }
