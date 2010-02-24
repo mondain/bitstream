@@ -4,7 +4,6 @@ import jBittorrentAPI.ExampleDownloadFiles;
 
 import java.io.File;
 import java.util.Date;
-import java.util.Random;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;

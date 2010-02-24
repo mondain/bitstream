@@ -2,19 +2,19 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/swt-3.5.1-win32-win32-x86/swt.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/jdom.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/simple-upload-0.3.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/ant.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/freemarker.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/groovy.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/jaxen-core.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/jaxen-jdom.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/kxml.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/saxpath.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/velocity.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/xalan.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/xerces.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/SWT-SPROJ/APIs/ext/xml-apis.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/ext/ant.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/ext/freemarker.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/ext/groovy.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/ext/jaxen-core.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/ext/jaxen-jdom.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/ext/jdom.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/ext/kxml.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/ext/saxpath.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/ext/simple-upload-0.3.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/ext/velocity.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/ext/xalan.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/ext/xerces.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/ext/xml-apis.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Saleem/workspace/BitStream/APIs/swt-3.5.1-win32-win32-x86/swt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
