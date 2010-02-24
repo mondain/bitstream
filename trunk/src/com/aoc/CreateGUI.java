@@ -83,9 +83,8 @@ public class CreateGUI extends SelectionAdapter {
 		FileDialog dialog = new FileDialog(shell, SWT.OPEN);
 		dialog.setText("Browse for a File");
 		dialog.setFilterPath(History.getInstance().getLastCreateDir());
-		dialog.setFilterExtensions(new String[] { "*.torrent", "*.*" });
-		dialog.setFilterNames(new String[] { "Torrent Files (*.torrent)",
-				"All Files (*.*)" });
+		dialog.setFilterExtensions(new String[] { "*.*" });
+		dialog.setFilterNames(new String[] { "All Files (*.*)" });
 		return dialog.open();
 	}
 
@@ -97,8 +96,8 @@ public class CreateGUI extends SelectionAdapter {
 				"John Lynch", "..", "this is a fun video" };
 		ExampleCreateTorrent.main(params);
 		// publish torrent
-		String[] params2 = new String[] {
-				torrentPath, "http://localhost:8081/upload", "none", "none",
+		String[] params2 = new String[] { torrentPath,
+				"http://localhost:8081/upload", "none", "none",
 				"this is a fun video" };
 
 		ExamplePublish.main(params2);
@@ -132,14 +131,15 @@ public class CreateGUI extends SelectionAdapter {
 			if (path == null) {
 				return;
 			}
-			
-			try{
+
+			try {
 				File f = new File(path);
 				History.getInstance().setLastCreateDir(f.getParent());
-			}catch(Exception ioe) {
-				History.getInstance().setLastCreateDir(System.getProperty("user.home"));
+			} catch (Exception ioe) {
+				History.getInstance().setLastCreateDir(
+						System.getProperty("user.home"));
 			}
-			
+
 			tField.setText(path);
 		}
 	}
