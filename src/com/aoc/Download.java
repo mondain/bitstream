@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.ProgressBar;
@@ -29,7 +31,7 @@ public class Download implements Serializable {
 	private String name = null; // name of the file
 	private int progress = 0; // shows percentage of downloaded part
 	private float downloaded = 0.0f; // downloaded so far
-	private float size = 100.0f; // total size of the file
+	private float size = 0.0f; // total size of the file
 	public int status = 0; // set to 'downloading' by default
 	private String added = null; // the date and time the download was added
 	private String downloadTo = PrefGUI.downloadTo; // set to default download
@@ -78,11 +80,15 @@ public class Download implements Serializable {
 	}
 
 	public void updatePBar(int p) {
-		if (pBar != null) {
-			this.progress = p;
-			pBar.setSelection((int) progress);
-		} else {
-			System.err.println("ERROR: Progress Bar not initialized");
+		try {
+			if (pBar != null) {
+				this.progress = p;
+				pBar.setSelection((int) progress);
+			} else {
+				System.err.println("ERROR: Progress Bar not initialized");
+			}
+		} catch (SWTException swte) {
+
 		}
 	}
 
@@ -150,7 +156,7 @@ public class Download implements Serializable {
 				String toPlay = fileNames.get(list.getSelectionIndex());
 				String absPath = downloadTo + toPlay;
 				System.out.println("Path: " + absPath);
-				//TODO: play this file
+				// TODO: play this file
 			}
 		});
 		list.setSize(400, 200);
@@ -167,7 +173,8 @@ public class Download implements Serializable {
 				shell.dispose();
 			}
 		});
-		shell.setLocation(shell.getParent().getLocation().x + 100, shell.getParent().getLocation().y + 50);
+		shell.setLocation(shell.getParent().getLocation().x + 100, shell
+				.getParent().getLocation().y + 50);
 		shell.pack();
 		shell.open();
 		Display display = Main.getInstance().getDisplay();

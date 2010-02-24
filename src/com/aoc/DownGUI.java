@@ -26,6 +26,7 @@ public class DownGUI extends SelectionAdapter {
 	private Text tField = null;
 	private Button okButton = null;
 
+	public Thread update = null;
 	public static boolean shown = false;
 
 	public DownGUI(Shell parent, String label) {
@@ -95,48 +96,7 @@ public class DownGUI extends SelectionAdapter {
 	public void widgetSelected(SelectionEvent se) {
 		// TODO Auto-generated method stub
 		if (((Button) se.widget).getText().equals("OK")) {
-			final String path = tField.getText();
-			if (!(path.length() > 0)) {
-				return;
-			}
-			// TODO: validate path here
-			System.out.println(path);
-			Main m = Main.getInstance();
-			shell.dispose();
-			final Download d = new Download(path, new Date());
-			m.addDownload(d);
-			m.addToTable(d);
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					// download the file
-					String to = PrefGUI.downloadTo;
-					if (to.charAt(to.length() - 1) != '\\') {
-						to += "\\";
-					}
-					d.setDownloadTo(to);
-					String[] params = new String[] { path, to };
-					d.setEDF(edf);
-					edf.DownloadFiles(params);
-					exit = true;
-				}
-			}).start();
-			Thread t = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					int complete = 0;
-					while (complete < 100 && !exit) {
-						complete = (int) edf.getCompleted();
-						if (edf != null) {
-							d.updatePBar(complete);
-						} else {
-						}
-					}
-				}
-			});
-			Main.getInstance().getDisplay().timerExec(100, t);
+			downloadFiles();
 		} else if (((Button) se.widget).getText().equals("Browse")) {
 			String path = fileBrowse();
 			if (path == null) {
@@ -155,4 +115,64 @@ public class DownGUI extends SelectionAdapter {
 		}
 	}
 
+	public void downloadFiles() {
+		final String path = tField.getText();
+		if (!(path.length() > 0)) {
+			return;
+		}
+		// TODO: validate path here
+		System.out.println(path);
+		final Main m = Main.getInstance();
+		shell.dispose();
+		final Download d = new Download(path, new Date());
+		m.addDownload(d);
+		m.addToTable(d);
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// download the file
+				String to = PrefGUI.downloadTo;
+				if (to.charAt(to.length() - 1) != '\\') {
+					to += "\\";
+				}
+				d.setDownloadTo(to);
+				String[] params = new String[] { path, to };
+				d.setEDF(edf);
+				edf.DownloadFiles(params);
+				exit = true;
+			}
+		}).start();
+		update = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// Main.getInstance().getDisplay().timerExec(100, this);
+				int complete = 0;
+				while (complete < 100 && !exit) {
+					if (edf == null) {
+						continue;
+					}
+					complete = (int) edf.getCompleted();
+					d.updatePBar(complete);
+					if (edf.dm != null) {
+						if (edf.dm.getComplete()) {
+							complete = 100;
+							d.updatePBar(100);
+							d.setDownloaded(100);
+							d.setSize(edf.dm.torrent.total_length / (1024 * 1024));
+							m.updateTable(d);
+							// Main.getInstance().getDisplay().disposeExec(this);
+							break;
+						}
+						d.setSize(edf.dm.torrent.total_length / (1024 * 1024));
+						d.setDownloaded(edf.dm.getTotal());
+						m.updateTable(d);
+					}
+					//
+				}
+			}
+		});
+		m.getDisplay().timerExec(100, update);
+	}
 }

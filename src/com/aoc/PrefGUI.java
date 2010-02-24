@@ -3,11 +3,14 @@ package com.aoc;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
@@ -26,6 +29,7 @@ public class PrefGUI extends SelectionAdapter {
 	private Text tField = null;
 	private Shell shell = null;
 	public static String downloadTo = System.getProperty("user.home");
+	public static boolean shown = false;
 
 	public PrefGUI(Shell s) {
 		shell = new Shell(s);
@@ -115,12 +119,32 @@ public class PrefGUI extends SelectionAdapter {
 			}
 		});
 
+		Point p = shell.getParent().getLocation();
+		shell.setLocation(p.x + 30, p.y + 30);
 		shell.pack();
-		shell.open();
-		Display display = Main.getInstance().getDisplay();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
+
+		shell.addDisposeListener(new DisposeListener() {
+
+			@Override
+			public void widgetDisposed(DisposeEvent arg0) {
+				shown = false;
+				shell.dispose();
+			}
+
+		});
+	}
+
+	public void show() {
+		if (!shown) {
+			shown = true;
+			shell.open();
+			Display display = Main.getInstance().getDisplay();
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch())
+					display.sleep();
+			}
+		} else {
+			return;
 		}
 	}
 

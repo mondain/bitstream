@@ -43,7 +43,11 @@ public class Main {
 	private static Main INSTANCE = null;
 	private PersistData allDownloads = null;
 	String fileName = "data.ser";
-	//CoolBarExamples cb = null;
+	// CoolBarExamples cb = null;
+
+	//private DownGUI downScreen = null;
+	//private CreateGUI createScreen = null;
+	//private PrefGUI prefScreen = null;
 
 	public static void main(String[] args) {
 		new Main();
@@ -55,27 +59,54 @@ public class Main {
 		initGUI();
 	}
 
-	private void resurrect() {
-		try {
-			FileInputStream fin = new FileInputStream(fileName);
-			ObjectInputStream oin = new ObjectInputStream(fin);
-			allDownloads = (PersistData) oin.readObject();
-			PrefGUI.downloadTo = oin.readUTF();
-			History.getInstance().setLastCreateDir(oin.readUTF());
-			History.getInstance().setLastDownDir(oin.readUTF());
-			System.out.println("Downloads To: " + PrefGUI.downloadTo);
-			oin.close();
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-			allDownloads = new PersistData();
+	public void initGUI() {
+
+		display = new Display();
+		shell = new Shell(display);
+		shell.setText("SPROJ");
+
+		addMenuBar();
+		addTable();
+		shell.setSize(600, 400);
+
+		shell.addDisposeListener(new DisposeListener() {
+
+			@Override
+			public void widgetDisposed(DisposeEvent arg0) {
+				// save vector
+				try {
+					FileOutputStream fout = new FileOutputStream(fileName);
+					ObjectOutputStream oout = new ObjectOutputStream(fout);
+					oout.writeObject(allDownloads);
+					oout.flush();
+					oout.writeUTF(PrefGUI.downloadTo);
+					oout.flush();
+					oout.writeUTF(History.getInstance().getLastCreateDir());
+					oout.flush();
+					oout.writeUTF(History.getInstance().getLastDownDir());
+					oout.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				//if (downScreen != null) {
+				//	if (downScreen.update != null) {
+				//		downScreen.update.interrupt();
+				//		display.disposeExec(downScreen.update);
+				//	}
+				//}
+			}
+
+		});
+
+		shell.open();
+
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
 		}
-		System.out.println("Num downloads = " + allDownloads.size());
-		for (int i = 0; i < allDownloads.size(); i++) {
-			Download d = (Download) allDownloads.get(i);
-			d.createPBar(table);
-			d.updatePBar(d.getProgress());
-			addToTable(d);
-		}
+
+		display.dispose();
+		System.exit(0);
 	}
 
 	public void addMenuBar() {
@@ -119,74 +150,6 @@ public class Main {
 
 	}
 
-	public void initGUI() {
-		display = new Display();
-		shell = new Shell(display);
-		shell.setText("SPROJ");
-
-		addMenuBar();
-		//cb = new CoolBarExamples(shell);
-		addTable();
-		/*SelectionListener sl = new SelectionListener() {
-
-			@Override
-			public void widgetSelected(SelectionEvent se) {
-				int index = table.getSelectionIndex();
-				System.out.println("Selected: " + index);
-				if (index < 0) {
-					return;
-				}
-				Download d = (Download) allDownloads.get(index);
-				d.showFiles();
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				System.out.println("Selected: ");
-
-			}
-		};
-		cb.setListener(sl);
-		*/
-
-		shell.setSize(600, 400);
-		// shell.pack();
-
-		shell.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent arg0) {
-				// save vector
-				try {
-					FileOutputStream fout = new FileOutputStream(fileName);
-					ObjectOutputStream oout = new ObjectOutputStream(fout);
-					oout.writeObject(allDownloads);
-					oout.flush();
-					oout.writeUTF(PrefGUI.downloadTo);
-					oout.flush();
-					oout.writeUTF(History.getInstance().getLastCreateDir());
-					oout.flush();
-					oout.writeUTF(History.getInstance().getLastDownDir());
-					oout.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-		});
-
-		shell.open();
-
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
-
-		display.dispose();
-		System.exit(0);
-	}
-
 	private void addTable() {
 		FormLayout f = new FormLayout();
 		shell.setLayout(f);
@@ -194,7 +157,7 @@ public class Main {
 		FormData textData = new FormData();
 		textData.left = new FormAttachment(0);
 		textData.right = new FormAttachment(100);
-		//textData.top = new FormAttachment(cb.getCoolBar());
+		// textData.top = new FormAttachment(cb.getCoolBar());
 		textData.top = new FormAttachment(0);
 		textData.bottom = new FormAttachment(97);
 
@@ -205,17 +168,17 @@ public class Main {
 		table.setBackground(display.getSystemColor(SWT.COLOR_GRAY));
 
 		table.addMouseListener(new MouseListener() {
-		
+
 			@Override
 			public void mouseUp(MouseEvent arg0) {
 				// TODO Auto-generated method stub
 			}
-		
+
 			@Override
 			public void mouseDown(MouseEvent arg0) {
 				// TODO Auto-generated method stub
 			}
-		
+
 			@Override
 			public void mouseDoubleClick(MouseEvent me) {
 				int index = table.getSelectionIndex();
@@ -253,10 +216,14 @@ public class Main {
 		resurrect();
 	}
 
+	public Table getTable() {
+		return this.table;
+	}
+
 	public void addToTable(Download d) {
 		TableItem item = new TableItem(table, SWT.NONE);
 		item.setText(new String[] { d.getName(), d.getSize(),
-				d.getDownloaded() + " MB", d.getTime() });
+				d.getDownloaded() + " %", d.getTime() });
 		// add progress bar
 		TableEditor editor = new TableEditor(table);
 		editor.grabHorizontal = editor.grabVertical = true;
@@ -275,6 +242,29 @@ public class Main {
 		return allDownloads.get(index);
 	}
 
+	private void resurrect() {
+		try {
+			FileInputStream fin = new FileInputStream(fileName);
+			ObjectInputStream oin = new ObjectInputStream(fin);
+			allDownloads = (PersistData) oin.readObject();
+			PrefGUI.downloadTo = oin.readUTF();
+			History.getInstance().setLastCreateDir(oin.readUTF());
+			History.getInstance().setLastDownDir(oin.readUTF());
+			System.out.println("Downloads To: " + PrefGUI.downloadTo);
+			oin.close();
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			allDownloads = new PersistData();
+		}
+		System.out.println("Num downloads = " + allDownloads.size());
+		for (int i = 0; i < allDownloads.size(); i++) {
+			Download d = (Download) allDownloads.get(i);
+			d.createPBar(table);
+			d.updatePBar(d.getProgress());
+			addToTable(d);
+		}
+	}
+
 	class MenuHandler extends SelectionAdapter {
 
 		public MenuHandler() {
@@ -287,12 +277,19 @@ public class Main {
 					"&Create Torrent\tCtrl+C")) {
 				// create torrent
 				if (!CreateGUI.shown) {
+					//if (createScreen == null)
+						//createScreen = new CreateGUI(shell, "Create Torrent");
+					//createScreen.show();
 					new CreateGUI(shell, "Create Torrent").show();
 				}
 			} else if (((MenuItem) se.widget).getText().equals(
 					"&Download Torrent\tCtrl+D")) {
 				// download torrent
 				if (!DownGUI.shown) {
+					//if (downScreen == null) {
+						//downScreen = new DownGUI(shell, "Download Torrent");
+					//}
+					//downScreen.show();
 					new DownGUI(shell, "Download Torrent").show();
 				}
 			} else if (((MenuItem) se.widget).getText().equals("E&xit")) {
@@ -300,15 +297,24 @@ public class Main {
 				shell.close();
 			} else if (((MenuItem) se.widget).getText().equals("&Preferences")) {
 				// show preferences
-				new PrefGUI(shell);
+				//if (prefScreen == null) {
+					//prefScreen = new PrefGUI(shell);
+				//}
+				//prefScreen.show();
+				new PrefGUI(shell).show();
 			}
 		}
 	}
 
+	public void updateTable(Download d) {
+		int index = allDownloads.indexOf(d);
+		table.getItem(index).setText(new String[] { d.getName(), d.getSize(),
+				d.getDownloaded() + " %", d.getTime() });
+	}
 	public Display getDisplay() {
 		return this.display;
 	}
-	
+
 	public Shell getShell() {
 		return this.shell;
 	}

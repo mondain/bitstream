@@ -37,10 +37,21 @@
 
 package jBittorrentAPI;
 
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.Socket;
-import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeMap;
 
 import com.aoc.Download;
 
@@ -51,6 +62,10 @@ import com.aoc.Download;
 public class DownloadManager implements DTListener, PeerUpdateListener,
 		ConListenerInterface {
 
+	int numComplete = 0;
+	boolean downloadComplete = false;
+	
+	
 	// Client ID
 	private byte[] clientID;
 
@@ -151,13 +166,22 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 			}
 		}
 		this.lastUnchoking = System.currentTimeMillis();
+		if(numComplete==nbPieces) {
+			downloadComplete = true;
+		}
 	}
 
+	public boolean getComplete() {
+		return this.downloadComplete;
+	}
 	public boolean testComplete(int piece) {
 		boolean complete = false;
 		this.pieceList[piece].setBlock(0, this.getPieceFromFiles(piece));
 		complete = this.pieceList[piece].verify();
 		this.pieceList[piece].clearData();
+		if(complete) {
+			numComplete++;
+		}
 		return complete;
 	}
 
@@ -554,13 +578,16 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	 *            boolean
 	 */
 
-	float totaldl;
+	private float totaldl;
 
 	public float getTotal() {
 		// System.out.println("called DownloadManager::getTotal():" + totaldl);
 		return totaldl;
 	}
 
+	public void setTotal(float total) {
+		this.totaldl = total;
+	}
 	public synchronized void pieceCompleted(String peerID, int i,
 			boolean complete) {
 		synchronized (this.isRequested) {
@@ -573,6 +600,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 				totaldl = (float) (((float) (100.0))
 						* ((float) (this.isComplete.cardinality())) / ((float) (this.nbPieces)));
 
+				setTotal(totaldl);
 				for (Iterator it = this.task.keySet().iterator(); it.hasNext();)
 					try {
 						this.task.get(it.next()).ms
