@@ -1,6 +1,5 @@
 package com.aoc;
 
-import jBittorrentAPI.DownloadManager;
 import jBittorrentAPI.ExampleDownloadFiles;
 
 import java.io.Serializable;
@@ -22,6 +21,10 @@ import org.eclipse.swt.widgets.Table;
 
 public class Download implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// keeps the details about a download
 	private String name = null; // name of the file
 	private int progress = 0; // shows percentage of downloaded part
@@ -103,6 +106,7 @@ public class Download implements Serializable {
 		this.edf = edf;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void showFiles() {
 		if (shown) {
 			return;
