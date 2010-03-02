@@ -110,14 +110,15 @@ public class Download implements Serializable {
 
 	public void setEDF(ExampleDownloadFiles edf) {
 		this.edf = edf;
+		fileNames = edf.dm.torrent.name;
 	}
 
 	@SuppressWarnings("unchecked")
 	public void showFiles() {
 		if (shown) {
+			System.out.println("Already shown");
 			return;
 		}
-		System.out.println("In showFiles");
 		final Shell shell = new Shell(Main.getInstance().getShell(),
 				SWT.DIALOG_TRIM);
 		String title = name;
@@ -129,9 +130,12 @@ public class Download implements Serializable {
 		int style = SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL;
 		final List list = new List(shell, style);
 		if (edf != null) {
+			System.out.println("edf is null");
 			fileNames = edf.dm.torrent.name;
 		}
+		System.out.println("In showFiles");
 		if (fileNames == null) {
+			System.out.println("fileName is null");
 			return;
 		}
 		for (int i = 0; i < fileNames.size(); i++) {
@@ -182,5 +186,6 @@ public class Download implements Serializable {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
+		shell.dispose();
 	}
 }

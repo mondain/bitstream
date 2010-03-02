@@ -125,8 +125,8 @@ public class DownGUI extends SelectionAdapter {
 		final Main m = Main.getInstance();
 		shell.dispose();
 		final Download d = new Download(path, new Date());
-		m.addDownload(d);
-		m.addToTable(d);
+		m.getDownloadTable().addDownload(d);
+		m.getDownloadTable().addToTable(d);
 		new Thread(new Runnable() {
 
 			@Override
@@ -138,8 +138,8 @@ public class DownGUI extends SelectionAdapter {
 				}
 				d.setDownloadTo(to);
 				String[] params = new String[] { path, to };
-				d.setEDF(edf);
 				edf.DownloadFiles(params);
+				d.setEDF(edf);
 				exit = true;
 			}
 		}).start();
@@ -161,13 +161,13 @@ public class DownGUI extends SelectionAdapter {
 							d.updatePBar(100);
 							d.setDownloaded(100);
 							d.setSize(edf.dm.torrent.total_length / (1024 * 1024));
-							m.updateTable(d);
+							m.getDownloadTable().updateTable(d);
 							// Main.getInstance().getDisplay().disposeExec(this);
 							break;
 						}
 						d.setSize(edf.dm.torrent.total_length / (1024 * 1024));
 						d.setDownloaded(edf.dm.getTotal());
-						m.updateTable(d);
+						m.getDownloadTable().updateTable(d);
 					}
 					//
 				}
