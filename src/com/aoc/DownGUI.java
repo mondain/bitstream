@@ -26,7 +26,7 @@ public class DownGUI extends SelectionAdapter {
 	private Text tField = null;
 	private Button okButton = null;
 
-	public Thread update = null;
+	// public Thread update = null;
 	public static boolean shown = false;
 
 	public DownGUI(Shell parent, String label) {
@@ -127,7 +127,8 @@ public class DownGUI extends SelectionAdapter {
 		final Download d = new Download(path, new Date());
 		m.getDownloadTable().addDownload(d);
 		m.getDownloadTable().addToTable(d);
-		new Thread(new Runnable() {
+
+		Thread download = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
@@ -142,34 +143,35 @@ public class DownGUI extends SelectionAdapter {
 				d.setEDF(edf);
 				exit = true;
 			}
-		}).start();
-		update = new Thread(new Runnable() {
-
+		});
+		download.start();
+		Thread update = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				// Main.getInstance().getDisplay().timerExec(100, this);
+				Main.getInstance().getDisplay().timerExec(100, this);
 				int complete = 0;
 				while (complete < 100 && !exit) {
 					if (edf == null) {
 						continue;
 					}
-					complete = (int) edf.getCompleted();
-					d.updatePBar(complete);
 					if (edf.dm != null) {
 						if (edf.dm.getComplete()) {
 							complete = 100;
 							d.updatePBar(100);
 							d.setDownloaded(100);
-							d.setSize(edf.dm.torrent.total_length / (1024 * 1024));
+							d.setSize(edf.dm.torrent.total_length
+									/ (1024 * 1024));
+							d.setFileNames(edf.dm.torrent.name);
 							m.getDownloadTable().updateTable(d);
-							// Main.getInstance().getDisplay().disposeExec(this);
 							break;
 						}
+						complete = (int) edf.getCompleted();
+						d.setProgress(complete);
 						d.setSize(edf.dm.torrent.total_length / (1024 * 1024));
 						d.setDownloaded(edf.dm.getTotal());
+						d.setFileNames(edf.dm.torrent.name);
 						m.getDownloadTable().updateTable(d);
 					}
-					//
 				}
 			}
 		});

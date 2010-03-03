@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="build"/>
 	<classpathentry exported="true" kind="lib" path="APIs/ext/ant.jar"/>
 	<classpathentry exported="true" kind="lib" path="APIs/ext/freemarker.jar"/>
 	<classpathentry exported="true" kind="lib" path="APIs/ext/groovy.jar"/>
