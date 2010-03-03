@@ -4,33 +4,33 @@
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. -->
-<project basedir="." default="build" name="jbittorrent">
+<project basedir="." default="build" name="bitstream">
     <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../../Dev Stuff/Java/eclipse-java-galileo-SR1-win32/eclipse"/>
+    <property name="ECLIPSE_HOME" value="../../Dev Stuff/Java/eclipse-java-galileo-SR1-win32/eclipse"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
     <property name="source" value="1.6"/>
-    <path id="jbittorrent.classpath">
-        <pathelement location="example"/>
-        <pathelement location="ext/ant.jar"/>
-        <pathelement location="ext/freemarker.jar"/>
-        <pathelement location="ext/groovy.jar"/>
-        <pathelement location="ext/jaxen-core.jar"/>
-        <pathelement location="ext/jaxen-jdom.jar"/>
-        <pathelement location="ext/jdom.jar"/>
-        <pathelement location="ext/kxml.jar"/>
-        <pathelement location="ext/saxpath.jar"/>
-        <pathelement location="ext/simple-upload-0.3.4.jar"/>
-        <pathelement location="ext/velocity.jar"/>
-        <pathelement location="ext/xalan.jar"/>
-        <pathelement location="ext/xerces.jar"/>
-        <pathelement location="ext/xml-apis.jar"/>
-        <pathelement location="jBittorrentAPI.jar"/>
-        <pathelement location="trackerBT.jar"/>
+    <path id="bitstream.classpath">
+        <pathelement location="build"/>
+        <pathelement location="APIs/ext/ant.jar"/>
+        <pathelement location="APIs/ext/freemarker.jar"/>
+        <pathelement location="APIs/ext/groovy.jar"/>
+        <pathelement location="APIs/ext/jaxen-core.jar"/>
+        <pathelement location="APIs/ext/jaxen-jdom.jar"/>
+        <pathelement location="APIs/ext/jdom.jar"/>
+        <pathelement location="APIs/ext/kxml.jar"/>
+        <pathelement location="APIs/ext/saxpath.jar"/>
+        <pathelement location="APIs/ext/simple-upload-0.3.4.jar"/>
+        <pathelement location="APIs/ext/velocity.jar"/>
+        <pathelement location="APIs/ext/xalan.jar"/>
+        <pathelement location="APIs/ext/xerces.jar"/>
+        <pathelement location="APIs/ext/xml-apis.jar"/>
+        <pathelement location="APIs/swt-3.5.1-win32-win32-x86/swt-debug.jar"/>
+        <pathelement location="APIs/swt-3.5.1-win32-win32-x86/swt.jar"/>
     </path>
     <target name="init">
-        <mkdir dir="example"/>
-        <copy includeemptydirs="false" todir="example">
+        <mkdir dir="build"/>
+        <copy includeemptydirs="false" todir="build">
             <fileset dir="src">
                 <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
@@ -38,16 +38,16 @@
         </copy>
     </target>
     <target name="clean">
-        <delete dir="example"/>
+        <delete dir="build"/>
     </target>
     <target depends="clean" name="cleanall"/>
     <target depends="build-subprojects,build-project" name="build"/>
     <target name="build-subprojects"/>
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="example" source="${source}" target="${target}">
+        <javac debug="true" debuglevel="${debuglevel}" destdir="build" source="${source}" target="${target}">
             <src path="src"/>
-            <classpath refid="jbittorrent.classpath"/>
+            <classpath refid="bitstream.classpath"/>
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
@@ -65,8 +65,8 @@
         <antcall target="build"/>
     </target>
     <target name="Main">
-        <java classname="sproj.Main" failonerror="true" fork="yes">
-            <classpath refid="jbittorrent.classpath"/>
+        <java classname="com.aoc.Main" failonerror="true" fork="yes">
+            <classpath refid="bitstream.classpath"/>
         </java>
     </target>
 </project>
