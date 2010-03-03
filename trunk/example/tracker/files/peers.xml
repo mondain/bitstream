@@ -1,20 +1,11 @@
 <peerlist>
   <peer>
-    <id>2D4245303030312D78DB64F3F232E9EB8F457130</id>
-    <ip>127.0.0.1</ip>
-    <port>6881</port>
-    <torrents>
-      <torrentid>EF9C62FC5FD4BE0A4C71AEC79A1EC6172F28A3D0</torrentid>
-    </torrents>
-    <updated>1267129846264</updated>
-  </peer>
-  <peer>
-    <id>2D4245303030312DAAF7C83FCE8041308D7F5EAF</id>
+    <id>2D4245303030312D187B140CF901FB6A3A53BB04</id>
     <ip>127.0.0.1</ip>
     <port>6882</port>
     <torrents>
       <torrentid>EF9C62FC5FD4BE0A4C71AEC79A1EC6172F28A3D0</torrentid>
     </torrents>
-    <updated>1267129873555</updated>
+    <updated>1267583712556</updated>
   </peer>
 </peerlist>

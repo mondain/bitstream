@@ -3,6 +3,7 @@ package com.aoc;
 import jBittorrentAPI.ExampleDownloadFiles;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -93,11 +94,11 @@ public class Download implements Serializable {
 	}
 
 	public void setSize(float size) {
-		this.size = size;
+		this.size = roundFloat(size);
 	}
 
 	public void setDownloaded(float update) {
-		this.downloaded = update;
+		this.downloaded = roundFloat(update);
 	}
 
 	public void setDownloadTo(String path) {
@@ -110,7 +111,19 @@ public class Download implements Serializable {
 
 	public void setEDF(ExampleDownloadFiles edf) {
 		this.edf = edf;
-		fileNames = edf.dm.torrent.name;
+	}
+
+	private float roundFloat(float f) {
+		DecimalFormat df2 = new DecimalFormat("#,###,###,##0.00");
+		float rounded = new Float(df2.format(f)).floatValue();
+		return rounded;
+	}
+
+	public void setFileNames(ArrayList<String> list) {
+		fileNames = list;
+		if(fileNames==null) {
+			System.out.println(">>>>>>>>>> FileNames Null");
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -121,15 +134,10 @@ public class Download implements Serializable {
 		}
 		final Shell shell = new Shell(Main.getInstance().getShell(),
 				SWT.DIALOG_TRIM);
-		String title = name;
-		if (name.length() > 45) {
-			title = name.substring(0, 15) + "..."
-					+ name.substring(name.length() - 30);
-		}
-		shell.setText(title);
+
 		int style = SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL;
 		final List list = new List(shell, style);
-		if (edf != null) {
+		if (edf != null && fileNames == null) {
 			System.out.println("edf is null");
 			fileNames = edf.dm.torrent.name;
 		}
@@ -138,6 +146,14 @@ public class Download implements Serializable {
 			System.out.println("fileName is null");
 			return;
 		}
+
+		String title = name;
+		if (name.length() > 45) {
+			title = name.substring(0, 15) + "..."
+					+ name.substring(name.length() - 30);
+		}
+		shell.setText(title);
+		
 		for (int i = 0; i < fileNames.size(); i++) {
 			list.add(fileNames.get(i));
 		}

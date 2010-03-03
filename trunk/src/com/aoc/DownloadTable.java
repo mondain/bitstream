@@ -129,10 +129,15 @@ public class DownloadTable {
 	}
 
 	public void updateTable(Download d) {
+		if(table.isDisposed()) {
+			return;
+		}
 		int index = allDownloads.indexOf(d);
 		table.getItem(index).setText(
 				new String[] { d.getName(), d.getSize(),
 						d.getDownloaded() + " %", d.getTime() });
+		d.updatePBar(d.getProgress());
+		table.update();
 	}
 
 	public void addDownload(Download d) {

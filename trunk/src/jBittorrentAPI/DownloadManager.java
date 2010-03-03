@@ -54,6 +54,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import com.aoc.Download;
+import com.aoc.Main;
 
 /**
  * Object that manages all concurrent downloads. It chooses which piece to
@@ -611,6 +612,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 					}
 				System.out.println("Piece completed by " + peerID + " : " + i
 						+ " (Total dl = " + totaldl + "% )");
+
 				this.savePiece(i);
 				this.getPieceBlock(i, 0, 15000);
 
