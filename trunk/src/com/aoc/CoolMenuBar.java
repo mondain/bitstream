@@ -54,16 +54,15 @@ public class CoolMenuBar {
 
 	CoolItem createItem(final CoolBar coolBar) {
 		toolBar = new ToolBar(coolBar, SWT.WRAP);
-		//final String labels[] = new String[] { "  Play  ", "  Delete  ",
-			//	"  dummy  ", "  dummy  " };
+		// final String labels[] = new String[] { "  Play  ", "  Delete  ",
+		// "  dummy  ", "  dummy  " };
 		final ArrayList<String> labels = new ArrayList<String>();
 		labels.add("Play");
 		labels.add("Delete");
 		labels.add("dummy");
 		labels.add("dummy");
 		labels.add("dummy");
-		
-		
+
 		for (int i = 0; i < labels.size(); i++) {
 			ToolItem item = new ToolItem(toolBar, SWT.PUSH);
 			item.setText(labels.get(i));
@@ -73,21 +72,31 @@ public class CoolMenuBar {
 				public void widgetSelected(SelectionEvent se) {
 					// TODO Auto-generated method stub
 					String label = ((ToolItem) se.widget).getText();
-					//int index = Arrays.binarySearch(labels, label);
+					// int index = Arrays.binarySearch(labels, label);
 					int index = labels.indexOf(label);
 					switch (index) {
-						case 0:
-							System.out.println("Play selected");
-							Download d = Main.getInstance().getDownloadTable().getDownload(Main.getInstance().getDownloadTable().getTable().getSelectionIndex());
-							d.showFiles();
-							break;
-						case 1:
-							System.out.println("Delete selected");
-							Main.getInstance().getDownloadTable().deleteSelected();
-							break;
-						default:
-							System.out.println(label + " selected. Index = " + index);
-							break;
+					case 0:
+						System.out.println("Play selected");
+						Download d = Main
+								.getInstance()
+								.getDownloadTable()
+								.getDownload(
+										Main.getInstance().getDownloadTable()
+												.getTable().getSelectionIndex());
+						if (d == null) {
+							System.err.println("Error: Download not initialized or invalid -- returning");
+							return;
+						}
+						d.showFiles();
+						break;
+					case 1:
+						System.out.println("Delete selected");
+						Main.getInstance().getDownloadTable().deleteSelected();
+						break;
+					default:
+						System.out.println(label + " selected. Index = "
+								+ index);
+						break;
 					}
 				}
 			});
