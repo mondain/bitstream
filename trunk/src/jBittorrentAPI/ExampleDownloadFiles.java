@@ -37,7 +37,6 @@
 
 package jBittorrentAPI;
 
-import com.aoc.Download;
 
 /**
  * Simple example to show how it is possible to download files using bittorrent
@@ -80,9 +79,6 @@ public class ExampleDownloadFiles {
 				Constants.SAVEPATH = args[1];
 			if (t != null) {
 				dm = new DownloadManager(t, Utils.generateID());
-				if (this.download != null) {
-					dm.setCurrent(download);
-				}
 				dm.startListening(6881, 6889);
 				dm.startTrackerUpdate();
 				dm.blockUntilCompletion();
@@ -99,12 +95,6 @@ public class ExampleDownloadFiles {
 					.println("Error while processing torrent file. Please restart the client");
 			System.exit(1);
 		}
-	}
-
-	private Download download = null;
-
-	public void setCurrent(Download d) {
-		this.download = d;
 	}
 
 	/*

@@ -65,7 +65,7 @@ public class DownloadTable {
 				}
 				Download d = (Download) allDownloads.get(index);
 				if (d == null) {
-					System.err.println("Error: Download not initialized or invalid -- returning");
+					System.err.println("Error: Invalid selection or error in file(s) -- returning");
 					return;
 				}
 				d.showFiles();
