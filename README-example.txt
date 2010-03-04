@@ -5,7 +5,12 @@ SET THE CLASSPATH: . ./env.sh (or execute env.bat if using MS Windows)
 START THE TRACKER: java trackerBT.Tracker <config.xml file>
 
 e.g.   java trackerBT.Tracker example_tracker_config.xml     # It reads example_tracker_config.xml. You can modify it.
+----------------------------------------------------------------------------------------------------------------------------
+Sharing (shortcut):
 
+java jBittorrentAPI.ExampleCreateTorrent example/client1/funvideo.torrent http://localhost:8081/announce 256 example/client1/funvideo05.wmv .. "John Lynch" .. "this is a fun video"
+java jBittorrentAPI.ExamplePublish example/client1/funvideo.torrent http://localhost:8081/upload none none "this is a fun video"
+java jBittorrentAPI.ExampleShareFiles example/client1/funvideo.torrent example/client1/
 ----------------------------------------------------------------------------------------------------------------------------
 CREATE TORRENT FILE: ExampleCreateTorrent <torrentPath> <announce url> <pieceLength> <filePath1> <filePath2> ... <..> <creator> <..> <comment>
 
