@@ -78,6 +78,8 @@ public class CoolMenuBar {
 					switch (index) {
 						case 0:
 							System.out.println("Play selected");
+							Download d = Main.getInstance().getDownloadTable().getDownload(Main.getInstance().getDownloadTable().getTable().getSelectionIndex());
+							d.showFiles();
 							break;
 						case 1:
 							System.out.println("Delete selected");
