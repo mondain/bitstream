@@ -8,6 +8,7 @@ package com.aoc;
  *
  */
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 
@@ -48,7 +49,7 @@ public class Main {
 		shell.setText("BitStream");
 
 		addMenuBar();
-		//addTable();
+		// addTable();
 		dTable = new DownloadTable(shell);
 		shell.setSize(600, 400);
 
@@ -71,12 +72,6 @@ public class Main {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				//if (downScreen != null) {
-				//	if (downScreen.update != null) {
-				//		downScreen.update.interrupt();
-				//		display.disposeExec(downScreen.update);
-				//	}
-				//}
 			}
 
 		});
@@ -132,7 +127,7 @@ public class Main {
 		prefItem.addSelectionListener(mh);
 
 	}
-	
+
 	class MenuHandler extends SelectionAdapter {
 
 		public MenuHandler() {
@@ -166,11 +161,11 @@ public class Main {
 	public String getFileName() {
 		return this.fileName;
 	}
-	
+
 	public DownloadTable getDownloadTable() {
 		return this.dTable;
 	}
-	
+
 	public Display getDisplay() {
 		return this.display;
 	}

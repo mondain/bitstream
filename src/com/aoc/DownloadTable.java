@@ -128,8 +128,8 @@ public class DownloadTable {
 		editor.setEditor(b, item, 4);
 	}
 
-	public void updateTable(Download d) {
-		if(table.isDisposed()) {
+	public void updateTable(final Download d) {
+		if (table.isDisposed()) {
 			return;
 		}
 		int index = allDownloads.indexOf(d);
@@ -139,6 +139,17 @@ public class DownloadTable {
 		d.updatePBar(d.getProgress());
 		table.update();
 	}
+
+	/*
+	 * public void updateTable(final Download d) { Runnable update = new
+	 * Runnable() {
+	 * 
+	 * @Override public void run() { // TODO Auto-generated method stub if
+	 * (table.isDisposed()) { return; } int index = allDownloads.indexOf(d);
+	 * table.getItem(index).setText( new String[] { d.getName(), d.getSize(),
+	 * d.getDownloaded() + " %", d.getTime() }); d.updatePBar(d.getProgress());
+	 * table.update(); } }; Main.getInstance().getDisplay().asyncExec(update); }
+	 */
 
 	public void addDownload(Download d) {
 		if (allDownloads == null) {

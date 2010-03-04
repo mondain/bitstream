@@ -96,7 +96,21 @@ public class DownGUI extends SelectionAdapter {
 	public void widgetSelected(SelectionEvent se) {
 		// TODO Auto-generated method stub
 		if (((Button) se.widget).getText().equals("OK")) {
-			downloadFiles();
+			final String path = tField.getText();
+			if (!(path.length() > 0)) {
+				return;
+			}
+			// TODO: validate path here
+			System.out.println(path);
+			Thread run = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					downloadFiles(path);
+				}
+			});
+			shell.dispose();
+			Main.getInstance().getDisplay().timerExec(100, run);
 		} else if (((Button) se.widget).getText().equals("Browse")) {
 			String path = fileBrowse();
 			if (path == null) {
@@ -115,15 +129,8 @@ public class DownGUI extends SelectionAdapter {
 		}
 	}
 
-	public void downloadFiles() {
-		final String path = tField.getText();
-		if (!(path.length() > 0)) {
-			return;
-		}
-		// TODO: validate path here
-		System.out.println(path);
+	public void downloadFiles(final String path) {
 		final Main m = Main.getInstance();
-		shell.dispose();
 		final Download d = new Download(path, new Date());
 		m.getDownloadTable().addDownload(d);
 		m.getDownloadTable().addToTable(d);
@@ -137,10 +144,10 @@ public class DownGUI extends SelectionAdapter {
 				if (to.charAt(to.length() - 1) != '\\') {
 					to += "\\";
 				}
+				d.setEDF(edf);
 				d.setDownloadTo(to);
 				String[] params = new String[] { path, to };
 				edf.DownloadFiles(params);
-				d.setEDF(edf);
 				exit = true;
 			}
 		});
@@ -148,7 +155,6 @@ public class DownGUI extends SelectionAdapter {
 		Thread update = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				Main.getInstance().getDisplay().timerExec(100, this);
 				int complete = 0;
 				while (complete < 100 && !exit) {
 					if (edf == null) {
@@ -157,24 +163,41 @@ public class DownGUI extends SelectionAdapter {
 					if (edf.dm != null) {
 						if (edf.dm.getComplete()) {
 							complete = 100;
-							d.updatePBar(100);
+							d.setProgress(100);
 							d.setDownloaded(100);
 							d.setSize(edf.dm.torrent.total_length
 									/ (1024 * 1024));
 							d.setFileNames(edf.dm.torrent.name);
-							m.getDownloadTable().updateTable(d);
+							if (!m.getDisplay().isDisposed()) {
+								m.getDisplay().asyncExec(new Runnable() {
+
+									@Override
+									public void run() {
+										m.getDownloadTable().updateTable(d);
+									}
+								});
+							}
 							break;
 						}
 						complete = (int) edf.getCompleted();
 						d.setProgress(complete);
-						d.setSize(edf.dm.torrent.total_length / (1024 * 1024));
 						d.setDownloaded(edf.dm.getTotal());
+						d.setSize(edf.dm.torrent.total_length / (1024 * 1024));
 						d.setFileNames(edf.dm.torrent.name);
-						m.getDownloadTable().updateTable(d);
+						if (!m.getDisplay().isDisposed()) {
+							m.getDisplay().asyncExec(new Runnable() {
+
+								@Override
+								public void run() {
+									m.getDownloadTable().updateTable(d);
+								}
+							});
+						}
 					}
 				}
 			}
 		});
-		m.getDisplay().timerExec(100, update);
+		// Main.getInstance().getDisplay().asyncExec(update);
+		update.start();
 	}
 }
