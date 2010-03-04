@@ -89,7 +89,6 @@ public class DownGUI extends SelectionAdapter {
 		return dialog.open();
 	}
 
-	boolean exit = false;
 	ExampleDownloadFiles edf = new ExampleDownloadFiles();
 
 	@Override
@@ -147,15 +146,18 @@ public class DownGUI extends SelectionAdapter {
 				d.setDownloadTo(to);
 				String[] params = new String[] { path, to };
 				edf.DownloadFiles(params);
-				exit = true;
+				d.setStopped(true);
 			}
 		});
 		download.start();
-		Thread update = new Thread(new Runnable() {
+		final Thread update = new Thread() {
 			@Override
 			public void run() {
 				int complete = 0;
-				while (complete < 100 && !exit) {
+				while (complete < 100 && !d.isStopped()) {
+					if(d.isStopped()) {
+						interrupt();
+					}
 					if (edf == null) {
 						continue;
 					}
@@ -173,7 +175,9 @@ public class DownGUI extends SelectionAdapter {
 
 									@Override
 									public void run() {
-										m.getDownloadTable().updateTable(d);
+										if (!d.isStopped()) {
+											m.getDownloadTable().updateTable(d);
+										}
 									}
 								});
 							}
@@ -190,15 +194,16 @@ public class DownGUI extends SelectionAdapter {
 
 								@Override
 								public void run() {
-									m.getDownloadTable().updateTable(d);
+									if (!d.isStopped()) {
+										m.getDownloadTable().updateTable(d);
+									}
 								}
 							});
 						}
 					}
 				}
 			}
-		});
-		// Main.getInstance().getDisplay().asyncExec(update);
+		};
 		update.start();
 	}
 }

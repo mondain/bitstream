@@ -43,6 +43,9 @@ public class Download implements Serializable {
 	private boolean shown = false;
 	private transient ExampleDownloadFiles edf = null;
 	private ArrayList<String> fileNames = null;
+	
+	//
+	private boolean stopped = false;
 
 	private transient ProgressBar pBar = null;
 	private transient TableEditor editor = null;
@@ -236,5 +239,19 @@ public class Download implements Serializable {
 				display.sleep();
 		}
 		shell.dispose();
+	}
+
+	/**
+	 * @param stop the stop to set
+	 */
+	public void setStopped(boolean stop) {
+		this.stopped = stop;
+	}
+
+	/**
+	 * @return the stop
+	 */
+	public boolean isStopped() {
+		return stopped;
 	}
 }
