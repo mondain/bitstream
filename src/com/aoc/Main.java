@@ -31,7 +31,7 @@ public class Main {
 	private static Main INSTANCE = null;
 	private String fileName = "data.ser";
 	private DownloadTable dTable = null;
-	private CoolBarExamples cbe = null;
+	private CoolMenuBar cbe = null;
 
 	public static void main(String[] args) {
 		new Main();
@@ -51,9 +51,9 @@ public class Main {
 
 		addMenuBar();
 		// addTable();
-		cbe = new CoolBarExamples(shell);
+		cbe = new CoolMenuBar(shell);
 		dTable = new DownloadTable(shell);
-		shell.setSize(600, 400);
+		shell.setSize(640, 400);
 
 		shell.addDisposeListener(new DisposeListener() {
 

@@ -10,10 +10,6 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -34,7 +30,7 @@ public class DownloadTable {
 		textData.left = new FormAttachment(0);
 		textData.right = new FormAttachment(100);
 		textData.top = new FormAttachment(Main.getInstance().getCoolBar());
-		//textData.top = new FormAttachment(0);
+		// textData.top = new FormAttachment(0);
 		textData.bottom = new FormAttachment(100);
 
 		table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
@@ -68,7 +64,7 @@ public class DownloadTable {
 			}
 		});
 
-		TableColumn[] column = new TableColumn[5];
+		TableColumn[] column = new TableColumn[6];
 		column[0] = new TableColumn(table, SWT.CENTER);
 		column[0].setText("File Name");
 
@@ -82,14 +78,18 @@ public class DownloadTable {
 		column[3].setText("Added");
 
 		column[4] = new TableColumn(table, SWT.CENTER);
-		column[4].setText("Progress");
+		column[4].setText("Speed");
+
+		column[5] = new TableColumn(table, SWT.CENTER);
+		column[5].setText("Progress");
 		// column[3].setMoveable(true);
 
 		column[0].setWidth(100);
 		column[1].setWidth(80);
 		column[2].setWidth(80);
 		column[3].setWidth(150);
-		column[4].setWidth(128);
+		column[4].setWidth(80);
+		column[5].setWidth(128);
 
 		resurrect();
 	}
@@ -125,24 +125,30 @@ public class DownloadTable {
 	public void addToTable(Download d) {
 		TableItem item = new TableItem(table, SWT.NONE);
 		item.setText(new String[] { d.getName(), d.getSize(),
-				d.getDownloaded() + " %", d.getTime() });
+				d.getDownloaded() + " %", d.getTime(), d.getDLRate() + "" });
 		// add progress bar
 		TableEditor editor = new TableEditor(table);
-		editor.grabHorizontal = editor.grabVertical = true;
+		d.setEditor(editor);
+		editor.grabHorizontal = true;
 		ProgressBar b = d.createPBar(table);
-		editor.setEditor(b, item, 4);
+		editor.setEditor(b, item, 5);
 	}
 
 	public void updateTable(final Download d) {
-		if (table.isDisposed()) {
-			return;
+		try {
+			if (table.isDisposed()) {
+				return;
+			}
+			int index = allDownloads.indexOf(d);
+			table.getItem(index).setText(
+					new String[] { d.getName(), d.getSize(),
+							d.getDownloaded() + " %", d.getTime(),
+							d.getDLRate() + "" });
+			d.updatePBar(d.getProgress());
+			table.update();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		int index = allDownloads.indexOf(d);
-		table.getItem(index).setText(
-				new String[] { d.getName(), d.getSize(),
-						d.getDownloaded() + " %", d.getTime() });
-		d.updatePBar(d.getProgress());
-		table.update();
 	}
 
 	/*
@@ -161,6 +167,19 @@ public class DownloadTable {
 			allDownloads = new PersistData();
 		}
 		allDownloads.add(d);
+	}
+
+	public void deleteSelected() {
+		try {
+			int index = table.getSelectionIndex();
+			Download d = allDownloads.get(index);
+			table.remove(index);
+			d.getEditor().getEditor().dispose();
+			allDownloads.remove(index);
+			table.update();
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
 	}
 
 	public Download getDownload(int index) {

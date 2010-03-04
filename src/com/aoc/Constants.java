@@ -10,4 +10,7 @@ public class Constants {
 	public final static int TEXT_HEIGHT = 10;
 	
 	
+	//// table columns ///
+	
+	
 }
