@@ -238,6 +238,10 @@ public class PlayerPanel extends JPanel {
 		return addressPanel;
 	}
 
+	public ContainerPlayer getPlayer() {
+		return getContainerPlayer();
+	}
+	
 	/**
 	 * This method initializes containerPlayer
 	 * 

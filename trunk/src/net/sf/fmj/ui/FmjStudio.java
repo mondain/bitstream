@@ -13,6 +13,10 @@ import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.event.WindowStateListener;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -48,16 +52,26 @@ public class FmjStudio {
 	private void run(String[] args) {
 		frame = new JFrame("FMJ Studio");
 		frame.setSize(new Dimension(640, 480));
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		// frame.setDefaultCloseOperation(JFrame.);
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				frame.dispose();
+				if (playerPanel != null) {
+					playerPanel.getPlayer().stop();
+				}
+			}
+		});
 
 		Container contentPane = frame.getContentPane();
 		playerPanel = new PlayerPanel();
+
 		contentPane.setLayout(new BorderLayout());
 		contentPane.add(playerPanel, BorderLayout.CENTER);
-		//JSlider jSlider = new JSlider();
-		//contentPane.add(jSlider, BorderLayout.SOUTH);
+		// JSlider jSlider = new JSlider();
+		// contentPane.add(jSlider, BorderLayout.SOUTH);
 
-		//frame.setMenuBar(getMenuBar());
+		// frame.setMenuBar(getMenuBar());
 
 		// Resize frame whenever new Component is added
 		playerPanel.getVideoPanel().addContainerListener(
