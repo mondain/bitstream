@@ -497,7 +497,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 		synchronized (this.isComplete) {
 			int index = 0;
 			ArrayList<Integer> possible = new ArrayList<Integer>(this.nbPieces);
-
 			for (int i = 0; i < this.nbPieces; i++) {
 				if ((!this.isPieceRequested(i) || (this.isComplete
 						.cardinality() > this.nbPieces - 3))
@@ -510,25 +509,27 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 						possible.add(i);
 				}
 			}
-			/*
-			 * for(int i=0;i<possible.size();i++) {
-			 * System.out.println(possible.get(i)); }
-			 */
+			for(int i=0;i<10;i++) {
+				System.out.println(possible.get(i));
+			}
+			System.out.println("--------------------------------------------");
 			// System.out.println(this.isRequested.cardinality()+" "+this.isComplete.cardinality()+" "
 			// + possible.size());
 			if (possible.size() > 0) {
-				// Random r = new Random(System.currentTimeMillis());
-				// index = possible.get(r.nextInt(possible.size()));
-
+			//	Random r = new Random(System.currentTimeMillis());
+			//	index = possible.get(r.nextInt(possible.size()));
+			
 				index = possible.get(0);
-				//System.out.println(index);
+				System.out.println("Index: "+index);
+				
 				this.setRequested(index, true);
-				return index;
+				
+				return (index);
+				
 			}
 			return -1;
 		}
 	}
-
 	/**
 	 * original private synchronized int choosePiece2Download(String id) {
 	 * synchronized (this.isComplete) { int index = 0; ArrayList<Integer>
