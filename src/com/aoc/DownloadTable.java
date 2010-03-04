@@ -43,23 +43,31 @@ public class DownloadTable {
 		table.addMouseListener(new MouseListener() {
 
 			@Override
-			public void mouseUp(MouseEvent arg0) {
+			public void mouseUp(MouseEvent me) {
 				// TODO Auto-generated method stub
 			}
 
 			@Override
-			public void mouseDown(MouseEvent arg0) {
+			public void mouseDown(MouseEvent me) {
+
 				// TODO Auto-generated method stub
 			}
 
 			@Override
 			public void mouseDoubleClick(MouseEvent me) {
+				if (me.button != 1) {
+					return;
+				}
 				int index = table.getSelectionIndex();
 				System.out.println("Selected: " + index);
 				if (index < 0) {
 					return;
 				}
 				Download d = (Download) allDownloads.get(index);
+				if (d == null) {
+					System.err.println("Error: Download not initialized or invalid -- returning");
+					return;
+				}
 				d.showFiles();
 			}
 		});
@@ -178,12 +186,17 @@ public class DownloadTable {
 			allDownloads.remove(index);
 			table.update();
 		} catch (Exception e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
 	}
 
 	public Download getDownload(int index) {
-		return allDownloads.get(index);
+		Download d = null;
+		try {
+			d = allDownloads.get(index);
+		} catch (Exception e) {
+		}
+		return d;
 	}
 
 	public PersistData getAllDownloads() {

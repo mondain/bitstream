@@ -16,6 +16,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.ProgressBar;
@@ -37,7 +38,7 @@ public class Download implements Serializable {
 	private String added = null; // the date and time the download was added
 	private String downloadTo = PrefGUI.downloadTo; // set to default download
 	private float downSpeed = 0.0f;
-	
+
 	// path
 	private boolean shown = false;
 	private transient ExampleDownloadFiles edf = null;
@@ -56,7 +57,7 @@ public class Download implements Serializable {
 		if (pBar == null) {
 			pBar = new ProgressBar(t, SWT.NONE);
 		}
-		//pBar.
+		pBar.setSize(new Point(40,10));
 		return pBar;
 	}
 
@@ -111,11 +112,11 @@ public class Download implements Serializable {
 	public void setEditor(TableEditor te) {
 		this.editor = te;
 	}
-	
+
 	public TableEditor getEditor() {
 		return this.editor;
 	}
-	
+
 	public String getDownloadTo() {
 		return this.downloadTo;
 	}
@@ -127,11 +128,11 @@ public class Download implements Serializable {
 	public void setDLRate(float speed) {
 		this.downSpeed = roundFloat(speed);
 	}
-	
+
 	public float getDLRate() {
 		return roundFloat(this.downSpeed);
 	}
-	
+
 	private float roundFloat(float f) {
 		DecimalFormat df2 = new DecimalFormat("#,###,###,##0.00");
 		float rounded = new Float(df2.format(f)).floatValue();
@@ -140,7 +141,7 @@ public class Download implements Serializable {
 
 	public void setFileNames(ArrayList<String> list) {
 		fileNames = list;
-		if(fileNames==null) {
+		if (fileNames == null) {
 			System.out.println(">>>>>>>>>> File names not initialized");
 		}
 	}
@@ -172,7 +173,7 @@ public class Download implements Serializable {
 					+ name.substring(name.length() - 30);
 		}
 		shell.setText(title);
-		
+
 		for (int i = 0; i < fileNames.size(); i++) {
 			list.add(fileNames.get(i));
 		}
@@ -190,8 +191,10 @@ public class Download implements Serializable {
 			}
 
 			@Override
-			public void mouseDoubleClick(MouseEvent arg0) {
-				// TODO Auto-generated method stub
+			public void mouseDoubleClick(MouseEvent me) {
+				if (me.button != 1) {
+					return;
+				}
 				String toPlay = fileNames.get(list.getSelectionIndex());
 				System.out.println(toPlay);
 				System.out.println(downloadTo);
@@ -204,9 +207,9 @@ public class Download implements Serializable {
 					public void run() {
 						net.sf.fmj.ui.FmjStudio.main(args);
 					}
-					
+
 				}).start();
-				
+
 			}
 		});
 		list.setSize(400, 200);
