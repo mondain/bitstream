@@ -509,9 +509,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 						possible.add(i);
 				}
 			}
-			for(int i=0;i<10;i++) {
-				System.out.println(possible.get(i));
-			}
 			System.out.println("--------------------------------------------");
 			// System.out.println(this.isRequested.cardinality()+" "+this.isComplete.cardinality()+" "
 			// + possible.size());
