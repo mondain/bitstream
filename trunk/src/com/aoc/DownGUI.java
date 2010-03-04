@@ -162,6 +162,7 @@ public class DownGUI extends SelectionAdapter {
 					if (edf.dm != null) {
 						if (edf.dm.getComplete()) {
 							complete = 100;
+							d.setDLRate(edf.dm.getDLRate());
 							d.setProgress(100);
 							d.setDownloaded(100);
 							d.setSize(edf.dm.torrent.total_length
@@ -179,6 +180,7 @@ public class DownGUI extends SelectionAdapter {
 							break;
 						}
 						complete = (int) edf.getCompleted();
+						d.setDLRate(edf.dm.getDLRate());
 						d.setProgress(complete);
 						d.setDownloaded(edf.dm.getTotal());
 						d.setSize(edf.dm.torrent.total_length / (1024 * 1024));

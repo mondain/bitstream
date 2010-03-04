@@ -1,6 +1,11 @@
 package com.aoc;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -16,12 +21,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-public class CoolBarExamples {
+public class CoolMenuBar {
 
 	private CoolBar coolBar = null;
 	private ToolBar toolBar;
 
-	public CoolBarExamples(final Shell shell) {
+	public CoolMenuBar(final Shell shell) {
 		coolBar = new CoolBar(shell, SWT.NONE);
 		createItem(coolBar);
 		FormData coolData = new FormData();
@@ -38,7 +43,7 @@ public class CoolBarExamples {
 
 	public void setListener(SelectionListener sl) {
 		System.out.println("Setting listener");
-		for(int i=0;i<this.coolBar.getItemCount();i++) {
+		for (int i = 0; i < this.coolBar.getItemCount(); i++) {
 			this.toolBar.getItem(0).addSelectionListener(sl);
 		}
 	}
@@ -49,11 +54,41 @@ public class CoolBarExamples {
 
 	CoolItem createItem(final CoolBar coolBar) {
 		toolBar = new ToolBar(coolBar, SWT.WRAP);
-		String labels[] = new String[] { "  Play  ", "  dummy  ", "  dummy  ",
-				"  dummy  ", "  dummy  ", "  dummy  ", "  dummy  ", "  dummy  " };
-		for (int i = 0; i < labels.length; i++) {
+		//final String labels[] = new String[] { "  Play  ", "  Delete  ",
+			//	"  dummy  ", "  dummy  " };
+		final ArrayList<String> labels = new ArrayList<String>();
+		labels.add("Play");
+		labels.add("Delete");
+		labels.add("dummy");
+		labels.add("dummy");
+		labels.add("dummy");
+		
+		
+		for (int i = 0; i < labels.size(); i++) {
 			ToolItem item = new ToolItem(toolBar, SWT.PUSH);
-			item.setText(labels[i]);
+			item.setText(labels.get(i));
+			item.addSelectionListener(new SelectionAdapter() {
+
+				@Override
+				public void widgetSelected(SelectionEvent se) {
+					// TODO Auto-generated method stub
+					String label = ((ToolItem) se.widget).getText();
+					//int index = Arrays.binarySearch(labels, label);
+					int index = labels.indexOf(label);
+					switch (index) {
+						case 0:
+							System.out.println("Play selected");
+							break;
+						case 1:
+							System.out.println("Delete selected");
+							Main.getInstance().getDownloadTable().deleteSelected();
+							break;
+						default:
+							System.out.println(label + " selected. Index = " + index);
+							break;
+					}
+				}
+			});
 		}
 		toolBar.pack();
 		Point size = toolBar.getSize();

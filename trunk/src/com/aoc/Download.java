@@ -9,6 +9,7 @@ import java.util.Date;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -35,12 +36,15 @@ public class Download implements Serializable {
 	public int status = 0; // set to 'downloading' by default
 	private String added = null; // the date and time the download was added
 	private String downloadTo = PrefGUI.downloadTo; // set to default download
+	private float downSpeed = 0.0f;
+	
 	// path
 	private boolean shown = false;
 	private transient ExampleDownloadFiles edf = null;
 	private ArrayList<String> fileNames = null;
 
 	private transient ProgressBar pBar = null;
+	private transient TableEditor editor = null;
 
 	@SuppressWarnings("deprecation")
 	public Download(String n, Date a) {
@@ -68,7 +72,7 @@ public class Download implements Serializable {
 	}
 
 	public float getDownloaded() {
-		return this.downloaded;
+		return roundFloat(this.downloaded);
 	}
 
 	public String getTime() {
@@ -88,7 +92,6 @@ public class Download implements Serializable {
 				System.err.println("ERROR: Progress Bar not initialized");
 			}
 		} catch (SWTException swte) {
-
 		}
 	}
 
@@ -104,6 +107,14 @@ public class Download implements Serializable {
 		this.downloadTo = path;
 	}
 
+	public void setEditor(TableEditor te) {
+		this.editor = te;
+	}
+	
+	public TableEditor getEditor() {
+		return this.editor;
+	}
+	
 	public String getDownloadTo() {
 		return this.downloadTo;
 	}
@@ -112,6 +123,14 @@ public class Download implements Serializable {
 		this.edf = edf;
 	}
 
+	public void setDLRate(float speed) {
+		this.downSpeed = roundFloat(speed);
+	}
+	
+	public float getDLRate() {
+		return roundFloat(this.downSpeed);
+	}
+	
 	private float roundFloat(float f) {
 		DecimalFormat df2 = new DecimalFormat("#,###,###,##0.00");
 		float rounded = new Float(df2.format(f)).floatValue();
@@ -176,7 +195,7 @@ public class Download implements Serializable {
 				String absPath = downloadTo + toPlay;
 				System.out.println("Path: " + absPath);
 				///////////// Remove the following line ////////////
-				throw new Error();
+				throw new Error(" >>>>>> Thrown error just for highlighting purpose <<<<<");
 				////////////////// Thrown error just for highlighting purpose ////////////
 				// TODO: play this file
 			}
