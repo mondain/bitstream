@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="ext/fmj.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/ant.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/freemarker.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/groovy.jar"/>
@@ -15,6 +16,21 @@
 	<classpathentry exported="true" kind="lib" path="ext/xalan.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/xerces.jar"/>
 	<classpathentry exported="true" kind="lib" path="ext/xml-apis.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/ffmpeg-java.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/fobs4jmf.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/gstreamer-java.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/jffmpeg-1.1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/jheora-patch.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/jl1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/jna.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/jogg-0.0.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/jorbis-0.0.15.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/jspeex.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/lti-civil-no_s_w_t.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/mp3spi1.9.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/theora-java.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/tritonus_share.jar"/>
+	<classpathentry exported="true" kind="lib" path="ext/vorbisspi1.0.2.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
