@@ -56,6 +56,7 @@ public class Download implements Serializable {
 		if (pBar == null) {
 			pBar = new ProgressBar(t, SWT.NONE);
 		}
+		//pBar.
 		return pBar;
 	}
 
