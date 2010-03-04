@@ -5,6 +5,7 @@ import jBittorrentAPI.ExamplePublish;
 import jBittorrentAPI.ExampleShareFiles;
 
 import java.io.File;
+import java.util.Date;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;

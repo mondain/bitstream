@@ -15,7 +15,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.ProgressBar;
@@ -122,7 +121,7 @@ public class Download implements Serializable {
 	public void setFileNames(ArrayList<String> list) {
 		fileNames = list;
 		if(fileNames==null) {
-			System.out.println(">>>>>>>>>> FileNames Null");
+			System.out.println(">>>>>>>>>> File names not initialized");
 		}
 	}
 
