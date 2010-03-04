@@ -8,7 +8,6 @@ package com.aoc;
  *
  */
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 
@@ -17,6 +16,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -31,6 +31,7 @@ public class Main {
 	private static Main INSTANCE = null;
 	private String fileName = "data.ser";
 	private DownloadTable dTable = null;
+	private CoolBarExamples cbe = null;
 
 	public static void main(String[] args) {
 		new Main();
@@ -50,6 +51,7 @@ public class Main {
 
 		addMenuBar();
 		// addTable();
+		cbe = new CoolBarExamples(shell);
 		dTable = new DownloadTable(shell);
 		shell.setSize(600, 400);
 
@@ -164,6 +166,10 @@ public class Main {
 
 	public DownloadTable getDownloadTable() {
 		return this.dTable;
+	}
+
+	public CoolBar getCoolBar() {
+		return this.cbe.getCoolBar();
 	}
 
 	public Display getDisplay() {

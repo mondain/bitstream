@@ -10,6 +10,10 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -21,7 +25,7 @@ public class DownloadTable {
 	private Table table = null;
 	private PersistData allDownloads = null;
 
-	public DownloadTable(Shell shell) {
+	public DownloadTable(final Shell shell) {
 		allDownloads = new PersistData();
 		FormLayout f = new FormLayout();
 		shell.setLayout(f);
@@ -29,8 +33,8 @@ public class DownloadTable {
 		FormData textData = new FormData();
 		textData.left = new FormAttachment(0);
 		textData.right = new FormAttachment(100);
-		// textData.top = new FormAttachment(cb.getCoolBar());
-		textData.top = new FormAttachment(0);
+		textData.top = new FormAttachment(Main.getInstance().getCoolBar());
+		//textData.top = new FormAttachment(0);
 		textData.bottom = new FormAttachment(100);
 
 		table = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
@@ -63,6 +67,7 @@ public class DownloadTable {
 				d.showFiles();
 			}
 		});
+
 		TableColumn[] column = new TableColumn[5];
 		column[0] = new TableColumn(table, SWT.CENTER);
 		column[0].setText("File Name");

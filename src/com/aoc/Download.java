@@ -175,6 +175,9 @@ public class Download implements Serializable {
 				String toPlay = fileNames.get(list.getSelectionIndex());
 				String absPath = downloadTo + toPlay;
 				System.out.println("Path: " + absPath);
+				///////////// Remove the following line ////////////
+				throw new Error();
+				////////////////// Thrown error just for highlighting purpose ////////////
 				// TODO: play this file
 			}
 		});

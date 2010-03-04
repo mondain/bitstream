@@ -132,9 +132,8 @@ public class DownGUI extends SelectionAdapter {
 	public void downloadFiles(final String path) {
 		final Main m = Main.getInstance();
 		final Download d = new Download(path, new Date());
-		m.getDownloadTable().addDownload(d);
 		m.getDownloadTable().addToTable(d);
-
+		m.getDownloadTable().addDownload(d);
 		Thread download = new Thread(new Runnable() {
 
 			@Override
