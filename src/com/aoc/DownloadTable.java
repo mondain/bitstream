@@ -49,7 +49,6 @@ public class DownloadTable {
 
 			@Override
 			public void mouseDown(MouseEvent me) {
-
 				// TODO Auto-generated method stub
 			}
 
@@ -65,7 +64,7 @@ public class DownloadTable {
 				}
 				Download d = (Download) allDownloads.get(index);
 				if (d == null) {
-					System.err.println("Error: Invalid selection or error in file(s) -- returning");
+					System.err.println("Error: No Download selected or Error in Download -- returning");
 					return;
 				}
 				d.showFiles();
@@ -137,7 +136,7 @@ public class DownloadTable {
 		// add progress bar
 		TableEditor editor = new TableEditor(table);
 		d.setEditor(editor);
-		editor.grabHorizontal = true;
+		editor.grabHorizontal = editor.grabVertical = true;
 		ProgressBar b = d.createPBar(table);
 		editor.setEditor(b, item, 5);
 	}
@@ -155,21 +154,10 @@ public class DownloadTable {
 			d.updatePBar(d.getProgress());
 			table.update();
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace(); //???????????????????????????????????????????????????????
 		}
 	}
-
-	/*
-	 * public void updateTable(final Download d) { Runnable update = new
-	 * Runnable() {
-	 * 
-	 * @Override public void run() { // TODO Auto-generated method stub if
-	 * (table.isDisposed()) { return; } int index = allDownloads.indexOf(d);
-	 * table.getItem(index).setText( new String[] { d.getName(), d.getSize(),
-	 * d.getDownloaded() + " %", d.getTime() }); d.updatePBar(d.getProgress());
-	 * table.update(); } }; Main.getInstance().getDisplay().asyncExec(update); }
-	 */
-
+	
 	public void addDownload(Download d) {
 		if (allDownloads == null) {
 			allDownloads = new PersistData();
@@ -183,7 +171,9 @@ public class DownloadTable {
 			Download d = allDownloads.get(index);
 			table.remove(index);
 			d.getEditor().getEditor().dispose();
+			d.setStopped(true);
 			allDownloads.remove(index);
+			table.setSelection(index - 1);
 			table.update();
 		} catch (Exception e) {
 			// e.printStackTrace();

@@ -84,7 +84,7 @@ public class CoolMenuBar {
 										Main.getInstance().getDownloadTable()
 												.getTable().getSelectionIndex());
 						if (d == null) {
-							System.err.println("Error: Download not initialized or invalid -- returning");
+							System.err.println("Error: No Download selected or Error in Download -- returning");
 							return;
 						}
 						d.showFiles();
