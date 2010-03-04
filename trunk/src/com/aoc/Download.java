@@ -193,12 +193,20 @@ public class Download implements Serializable {
 			public void mouseDoubleClick(MouseEvent arg0) {
 				// TODO Auto-generated method stub
 				String toPlay = fileNames.get(list.getSelectionIndex());
-				String absPath = downloadTo + toPlay;
+				System.out.println(toPlay);
+				System.out.println(downloadTo);
+				String absPath = "file:///" + downloadTo + toPlay;
 				System.out.println("Path: " + absPath);
-				///////////// Remove the following line ////////////
-				throw new Error(" >>>>>> Thrown error just for highlighting purpose <<<<<");
-				////////////////// Thrown error just for highlighting purpose ////////////
-				// TODO: play this file
+				final String[] args = new String[] { absPath };
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						net.sf.fmj.ui.FmjStudio.main(args);
+					}
+					
+				}).start();
+				
 			}
 		});
 		list.setSize(400, 200);
