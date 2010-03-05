@@ -86,7 +86,8 @@ public class FmjStudio {
 				});
 
 		frame.setVisible(true);
-
+		frame.setResizable(false);
+		
 		if (args.length > 0) {
 			// URL is first arg
 			final String url = args[0];

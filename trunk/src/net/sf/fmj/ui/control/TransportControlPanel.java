@@ -82,7 +82,7 @@ public class TransportControlPanel extends JPanel implements
 		this.add(getButtonPanel(), BorderLayout.WEST);
 		// this.add(getInfoPanel(), BorderLayout.CENTER);
 		//this.add(getInfoTextPane(), BorderLayout.CENTER);
-		//this.add(getAudioPanel(), BorderLayout.EAST);
+		this.add(getAudioPanel(), BorderLayout.EAST);
 
 		setAudioControlEnabled(false);
 	}
@@ -96,7 +96,6 @@ public class TransportControlPanel extends JPanel implements
 	private void stop() {
 		if (player != null) {
 			player.stop();
-			player.setPosition(20);
 		}
 	}
 
@@ -282,12 +281,15 @@ public class TransportControlPanel extends JPanel implements
 			buttonPanel = new JPanel();
 			buttonPanel.setLayout(new GridBagLayout());
 			buttonPanel.setOpaque(false);
-			buttonPanel.add(getPreviousButton(), new GridBagConstraints());
-			buttonPanel.add(getBackButton(), new GridBagConstraints());
+			
+			buttonPanel.add(new JLabel("         "));
+			
+			//buttonPanel.add(getPreviousButton(), new GridBagConstraints());
+			//buttonPanel.add(getBackButton(), new GridBagConstraints());
 			buttonPanel.add(getStopButton(), new GridBagConstraints());
 			buttonPanel.add(getPlayButton(), new GridBagConstraints());
-			buttonPanel.add(getForwardButton(), new GridBagConstraints());
-			buttonPanel.add(getNextButton(), new GridBagConstraints());
+			//buttonPanel.add(getForwardButton(), new GridBagConstraints());
+			//buttonPanel.add(getNextButton(), new GridBagConstraints());
 		}
 		return buttonPanel;
 	}
