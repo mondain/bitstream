@@ -58,6 +58,12 @@ public class TransportControlPanel extends JPanel implements
 		super();
 		initialize();
 	}
+	
+	public TransportControlPanel(TransportControl player) {
+		super();
+		setPlayer(player);
+		initialize();
+	}
 
 	public void setPlayer(TransportControl player) {
 		this.player = player;
@@ -75,8 +81,8 @@ public class TransportControlPanel extends JPanel implements
 		this.add(getPositionPanel(), BorderLayout.NORTH);
 		this.add(getButtonPanel(), BorderLayout.WEST);
 		// this.add(getInfoPanel(), BorderLayout.CENTER);
-		this.add(getInfoTextPane(), BorderLayout.CENTER);
-		this.add(getAudioPanel(), BorderLayout.EAST);
+		//this.add(getInfoTextPane(), BorderLayout.CENTER);
+		//this.add(getAudioPanel(), BorderLayout.EAST);
 
 		setAudioControlEnabled(false);
 	}
