@@ -55,6 +55,7 @@ public class FmjSlider extends JSlider {
 		this.setPaintTicks(false);
 		this.setSnapToTicks(true);
 
+		
 		this.addChangeListener(new SliderListener());
 	}
 
@@ -80,20 +81,14 @@ public class FmjSlider extends JSlider {
 
 		private void sendValue() {
 			int newValue = getValue();
-			value = newValue;
-
+			
 			// only send if value has changed
-			if (Math.abs(newValue - value) > 3000) {
-				
-				System.out.println(newValue);
-				if(player != null) {
-					player.setPosition(newValue);
+			if (Math.abs(newValue - value) > 1000) {
+				if(player != null) {	
+					player.setPosition(newValue/1000);
 				}
-				else {
-					System.out.println("null");
-				}
-				//player.setPosition(newValue/value);
 			}
+			value = newValue;
 		}
 
 	}

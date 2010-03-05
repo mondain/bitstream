@@ -163,7 +163,7 @@ public class PlayerPanel extends JPanel {
 	private void onLoadButtonClick() {
 
 		String location = (String) getAddressComboBox().getSelectedItem();
-		System.out.println(location);
+		//System.out.println(location);
 		if (location.trim().equals("")) {
 			showError("No URL specified");
 			return;
@@ -292,9 +292,9 @@ public class PlayerPanel extends JPanel {
 
 		JPanel southPanel = new JPanel();
 		southPanel.setLayout(new BorderLayout());
-		//this.add(southPanel, BorderLayout.SOUTH);
+		this.add(southPanel, BorderLayout.SOUTH);
 
-		//southPanel.add(getTransportControlPanel(), BorderLayout.NORTH);
+		southPanel.add(getTransportControlPanel(), BorderLayout.NORTH);
 		//southPanel.add(getStatusBar(), BorderLayout.SOUTH);
 
 		this.add(getVideoPanel(), BorderLayout.CENTER);
@@ -566,8 +566,8 @@ public class PlayerPanel extends JPanel {
 	 */
 	private TransportControlPanel getTransportControlPanel() {
 		if (transportControlPanel == null) {
-			transportControlPanel = new TransportControlPanel();
-			transportControlPanel.setPlayer(getContainerPlayer());
+			transportControlPanel = new TransportControlPanel(getContainerPlayer());
+			//transportControlPanel.setPlayer(getContainerPlayer());
 		}
 		return transportControlPanel;
 	}
