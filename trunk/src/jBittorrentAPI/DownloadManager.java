@@ -49,8 +49,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
+
+import com.aoc.Download;
 
 /**
  * Object that manages all concurrent downloads. It chooses which piece to
@@ -61,7 +64,8 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 
 	int numComplete = 0;
 	boolean downloadComplete = false;
-
+	
+	
 	// Client ID
 	private byte[] clientID;
 
@@ -162,7 +166,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 			}
 		}
 		this.lastUnchoking = System.currentTimeMillis();
-		if (numComplete == nbPieces) {
+		if(numComplete==nbPieces) {
 			downloadComplete = true;
 		}
 	}
@@ -170,13 +174,12 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	public boolean getComplete() {
 		return this.downloadComplete;
 	}
-
 	public boolean testComplete(int piece) {
 		boolean complete = false;
 		this.pieceList[piece].setBlock(0, this.getPieceFromFiles(piece));
 		complete = this.pieceList[piece].verify();
 		this.pieceList[piece].clearData();
-		if (complete) {
+		if(complete) {
 			numComplete++;
 		}
 		return complete;
@@ -187,6 +190,12 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	public void setExit() {
 		exit = true;
 
+	}
+
+	private Download download = null;
+
+	public void setCurrent(Download d) {
+		this.download = d;
 	}
 
 	/**
@@ -212,7 +221,9 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 					System.out.println("returning due to exit == true");
 					return;
 				}
-
+				if (download != null) {
+					download.setProgress(100);
+				}
 				String input = new IOManager()
 						.readUserInput("\r\n*****************************************\r\n"
 								+ "* Press ENTER to stop sharing the files *\r\n"
@@ -492,7 +503,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	 *            The id of the peer that wants to download
 	 * @return int The index of the piece to request
 	 */
-
 	private synchronized int choosePiece2Download(String id) {
 		synchronized (this.isComplete) {
 			int index = 0;
@@ -509,41 +519,18 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 						possible.add(i);
 				}
 			}
-			System.out.println("--------------------------------------------");
 			// System.out.println(this.isRequested.cardinality()+" "+this.isComplete.cardinality()+" "
 			// + possible.size());
 			if (possible.size() > 0) {
-			//	Random r = new Random(System.currentTimeMillis());
-			//	index = possible.get(r.nextInt(possible.size()));
-			
-				index = possible.get(0);
-				System.out.println("Index: "+index);
-				
+				Random r = new Random(System.currentTimeMillis());
+				index = possible.get(r.nextInt(possible.size()));
 				this.setRequested(index, true);
-				
 				return (index);
-				
 			}
 			return -1;
 		}
 	}
-	/**
-	 * original private synchronized int choosePiece2Download(String id) {
-	 * synchronized (this.isComplete) { int index = 0; ArrayList<Integer>
-	 * possible = new ArrayList<Integer>(this.nbPieces); for (int i = 0; i <
-	 * this.nbPieces; i++) { if ((!this.isPieceRequested(i) || (this.isComplete
-	 * .cardinality() > this.nbPieces - 3)) && //
-	 * (this.isRequested.cardinality() == this.nbPieces)) &&
-	 * (!this.isPieceComplete(i)) && this.peerAvailabilies.get(id) != null) {
-	 * 
-	 * if (this.peerAvailabilies.get(id).get(i)) possible.add(i); } } //
-	 * System.out
-	 * .println(this.isRequested.cardinality()+" "+this.isComplete.cardinality
-	 * ()+" " // + possible.size()); if (possible.size() > 0) { Random r = new
-	 * Random(System.currentTimeMillis()); index =
-	 * possible.get(r.nextInt(possible.size())); this.setRequested(index, true);
-	 * return (index); } return -1; } }
-	 **/
+
 	/**
 	 * Removes a task and peer after the task sends a completion message.
 	 * Completion can be caused by an error (bad request, ...) or simply by the
@@ -601,7 +588,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	public void setTotal(float total) {
 		this.totaldl = total;
 	}
-
 	public synchronized void pieceCompleted(String peerID, int i,
 			boolean complete) {
 		synchronized (this.isRequested) {
@@ -625,7 +611,6 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 					}
 				System.out.println("Piece completed by " + peerID + " : " + i
 						+ " (Total dl = " + totaldl + "% )");
-
 				this.savePiece(i);
 				this.getPieceBlock(i, 0, 15000);
 
