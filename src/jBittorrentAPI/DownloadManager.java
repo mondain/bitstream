@@ -72,7 +72,8 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	public TorrentFile torrent = null;
 
 	private int maxConnectionNumber = 100;
-
+    
+	private int counter=0;
 	private int nbOfFiles = 0;
 	private long length = 0;
 	private long left = 0;
@@ -91,12 +92,14 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	private LinkedHashMap<String, Peer> peerList = null;
 	private TreeMap<String, DownloadTask> task = null;
 	private LinkedHashMap<String, BitSet> peerAvailabilies = null;
+	private LinkedHashMap<Peer,Float> peerRate=null;
 
 	// LinkedHashMap downloaders = new LinkedHashMap<String, Integer>(4);
 	LinkedHashMap unchoken = new LinkedHashMap<String, Integer>();
 	private long lastTrackerContact = 0;
 	private long lastUnchoking = 0;
 	private short optimisticUnchoke = 3;
+	private Thread t;
 
 	/**
 	 * Create a new manager according to the given torrent and using the client
@@ -110,6 +113,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	public DownloadManager(TorrentFile torrent, final byte[] clientID) {
 		this.clientID = clientID;
 		this.peerList = new LinkedHashMap<String, Peer>();
+		this.peerRate=new LinkedHashMap<Peer,Float>();
 		// this.peerList = new LinkedList<Peer>();
 		this.task = new TreeMap<String, DownloadTask>();
 		this.peerAvailabilies = new LinkedHashMap<String, BitSet>();
@@ -169,8 +173,11 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 		if(numComplete==nbPieces) {
 			downloadComplete = true;
 		}
-	}
 
+		//callRate_Collector();
+	}
+    
+	
 	public boolean getComplete() {
 		return this.downloadComplete;
 	}
@@ -519,13 +526,23 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 						possible.add(i);
 				}
 			}
+			/*for(int i=0;i<10;i++) {
+				System.out.println(possible.get(i));
+			}
+			System.out.println("--------------------------------------------");*/
 			// System.out.println(this.isRequested.cardinality()+" "+this.isComplete.cardinality()+" "
 			// + possible.size());
 			if (possible.size() > 0) {
-				Random r = new Random(System.currentTimeMillis());
-				index = possible.get(r.nextInt(possible.size()));
+			//	Random r = new Random(System.currentTimeMillis());
+			//	index = possible.get(r.nextInt(possible.size()));
+			
+				index = possible.get(0);
+				System.out.println("Index: "+index);
+				
 				this.setRequested(index, true);
+				
 				return (index);
+				
 			}
 			return -1;
 		}
@@ -651,6 +668,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	 * rate, in a try to find a better source
 	 */
 	private synchronized void unchokePeers() {
+		
 		synchronized (this.task) {
 			int nbNotInterested = 0;
 			int nbDownloaders = 0;
@@ -885,6 +903,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	 *            LinkedHashMap
 	 */
 	public synchronized void updatePeerList(LinkedHashMap list) {
+		System.out.println("In update peer list");
 		// this.lastUnchoking = System.currentTimeMillis();
 		synchronized (this.task) {
 			// this.peerList.putAll(list);
