@@ -37,13 +37,14 @@
 
 package jBittorrentAPI;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Class representing a bittorrent peer
  *
  */
-public class Peer {
+public class Peer implements Serializable {
     private String id;
     private String ip;
     private int port;
