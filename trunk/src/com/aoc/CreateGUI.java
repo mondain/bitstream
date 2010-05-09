@@ -4,6 +4,7 @@ import jBittorrentAPI.ExampleCreateTorrent;
 import jBittorrentAPI.ExamplePublish;
 import jBittorrentAPI.ExampleShareFiles;
 
+import java.awt.BorderLayout;
 import java.io.File;
 import java.util.Date;
 
@@ -26,6 +27,7 @@ public class CreateGUI extends SelectionAdapter {
 
 	private Shell shell = null;
 	private Text tField = null;
+	private Text trackerField = null;
 
 	public static boolean shown = false;
 
@@ -53,6 +55,11 @@ public class CreateGUI extends SelectionAdapter {
 		tField.setToolTipText("Enter path of the torrent file");
 		tField.setLayoutData(new RowData(400, 21));
 
+		trackerField = new Text(shell, SWT.BORDER | SWT.SINGLE);
+		trackerField.setFont(font);
+		trackerField.setToolTipText("Enter URL of the tracker");
+		trackerField.setLayoutData(new RowData(400, 21));
+		
 		Button bButton = new Button(shell, SWT.NONE);
 		bButton.setText("Browse");
 		bButton.setLayoutData(new RowData(70, SWT.DEFAULT));
@@ -89,11 +96,11 @@ public class CreateGUI extends SelectionAdapter {
 		return dialog.open();
 	}
 
-	public void doInBackground(String path) {
+	public void doInBackground(String path, String tURL) {
 		String torrentPath = "example/client1/funvideo.torrent";
 		// create torrent
 		String[] params = new String[] { torrentPath,
-				"http://localhost:8081/announce", "256", path, "..",
+				tURL , "256", path, "..",
 				"John Lynch", "..", "this is a fun video" };
 		ExampleCreateTorrent.main(params);
 		// publish torrent
@@ -113,6 +120,7 @@ public class CreateGUI extends SelectionAdapter {
 		// TODO Auto-generated method stub
 		if (((Button) se.widget).getText().equals("OK")) {
 			final String path = tField.getText();
+			final String trackerURL = trackerField.getText();
 			if (!(path.length() > 0)) {
 				return;
 			}
@@ -122,7 +130,7 @@ public class CreateGUI extends SelectionAdapter {
 
 				@Override
 				public void run() {
-					doInBackground(path);
+					doInBackground(path, trackerURL);
 				}
 			}).start();
 
