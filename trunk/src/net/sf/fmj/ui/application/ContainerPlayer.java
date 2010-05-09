@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -193,7 +194,7 @@ public class ContainerPlayer implements TransportControl, SourcedTimerListener,
 	}
 
 	public void setMediaLocation(String mediaLocation,
-			boolean startAutomatically) throws NoDataSourceException,
+			boolean startAutomatically, RandomAccessFile raf) throws NoDataSourceException,
 			NoPlayerException, IOException {
 
 		logger.fine("setMediaLocation: " + mediaLocation
@@ -210,7 +211,9 @@ public class ContainerPlayer implements TransportControl, SourcedTimerListener,
 			notifyStatusListener(ContainerPlayerStatusListener.LOADING);
 			if (startAutomatically)
 				shouldStartOnRealize = true;
-			createNewPlayer(locator);
+			
+			System.out.println("here2");
+			createNewPlayer(locator, raf);
 		}
 		// catch (NoDataSourceException e)
 		// {
@@ -323,7 +326,7 @@ public class ContainerPlayer implements TransportControl, SourcedTimerListener,
 
 	/* --------------- private methods ------------------- */
 
-	private void createNewPlayer(MediaLocator source) throws NoPlayerException,
+	private void createNewPlayer(MediaLocator source, RandomAccessFile raf) throws NoPlayerException,
 			IOException {
 		if (!ClasspathChecker.check()) {
 			// workaround because JMF does not like relative file URLs.
@@ -344,8 +347,8 @@ public class ContainerPlayer implements TransportControl, SourcedTimerListener,
 				}
 			}
 		}
-
-		player = javax.media.Manager.createPlayer(source);
+		System.out.println("here3");
+		player = javax.media.Manager.createPlayer(source, raf);
 
 		transportControlState.setAllowPlay(true);
 		transportControlState.setAllowStop(false);

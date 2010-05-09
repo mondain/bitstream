@@ -17,6 +17,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowStateListener;
+import java.io.RandomAccessFile;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -49,7 +50,7 @@ public class FmjStudio {
 	 * 
 	 * @param args
 	 */
-	private void run(String[] args) {
+	public void run(String[] args, RandomAccessFile raf) {
 		frame = new JFrame("FMJ Studio");
 		frame.setSize(new Dimension(640, 480));
 		// frame.setDefaultCloseOperation(JFrame.);
@@ -71,7 +72,7 @@ public class FmjStudio {
 		// JSlider jSlider = new JSlider();
 		// contentPane.add(jSlider, BorderLayout.SOUTH);
 
-		// frame.setMenuBar(getMenuBar());
+		frame.setMenuBar(getMenuBar());
 
 		// Resize frame whenever new Component is added
 		playerPanel.getVideoPanel().addContainerListener(
@@ -91,7 +92,8 @@ public class FmjStudio {
 		if (args.length > 0) {
 			// URL is first arg
 			final String url = args[0];
-			playerPanel.addMediaLocatorAndLoad(url);
+			System.out.println("here");
+			playerPanel.addMediaLocatorAndLoad(url, raf);
 		}
 	}
 
@@ -331,7 +333,7 @@ public class FmjStudio {
 
 			//
 			FmjStudio main = new FmjStudio();
-			main.run(args);
+			main.run(args, null);
 		} catch (Throwable t) {
 			logger.log(Level.WARNING, "" + t, t);
 		}

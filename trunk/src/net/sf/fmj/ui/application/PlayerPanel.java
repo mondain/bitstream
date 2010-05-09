@@ -14,8 +14,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.RandomAccessFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,24 +69,26 @@ public class PlayerPanel extends JPanel {
 
 
 	
-	public void addMediaLocatorAndLoad(String url) {
+	public void addMediaLocatorAndLoad(String url, RandomAccessFile raf) {
 		boolean alreadyThere = false;
-		for (int i = 0; i < getAddressComboBox().getItemCount(); ++i) {
-			if (getAddressComboBox().getItemAt(i).equals(url)) {
+		for (int i = 0; i < getAddressComboBox(raf).getItemCount(); ++i) {
+			if (getAddressComboBox(raf).getItemAt(i).equals(url)) {
 				alreadyThere = true;
 				break;
 			}
 		}
 		if (!alreadyThere) {
-			getAddressComboBox().addItem(url);
+			getAddressComboBox(raf).addItem(url);
 		}
 
-		if (getAddressComboBox().getSelectedItem() == null
-				|| !getAddressComboBox().getSelectedItem().equals(url)) {
+		if (getAddressComboBox(raf).getSelectedItem() == null
+				|| !getAddressComboBox(raf).getSelectedItem().equals(url)) {
 			System.out.println(url.toString());
-			getAddressComboBox().setSelectedItem(url); // will auto-load
-		} else
-			onLoadButtonClick(); // already selected
+			getAddressComboBox(raf).setSelectedItem(url); // will auto-load
+		} else {
+			System.out.println("here1");
+			onLoadButtonClick(raf); // already selected
+		}
 	}
 
 	/**
@@ -113,7 +117,7 @@ public class PlayerPanel extends JPanel {
 	 * 
 	 * @return javax.swing.JComboBox
 	 */
-	private JComboBox getAddressComboBox() {
+	private JComboBox getAddressComboBox(final RandomAccessFile raf) {
 		if (addressComboBox == null) {
 			addressComboBox = new JComboBox();
 			addressComboBox.setEditable(true);
@@ -132,8 +136,8 @@ public class PlayerPanel extends JPanel {
 					// TODO: typing in the combo and clicking tab, causes this
 					// event to fire.
 					logger.fine("addressComboBox state change: " + e);
-					if (e.getStateChange() == ItemEvent.SELECTED)
-						onLoadButtonClick();
+					if (e.getStateChange() == ItemEvent.SELECTED){}
+						onLoadButtonClick(raf);
 				}
 			});
 		}
@@ -153,16 +157,16 @@ public class PlayerPanel extends JPanel {
 					"/net/sf/fmj/ui/images/import_wiz.png")));
 			loadButton.addActionListener(new java.awt.event.ActionListener() {
 				public void actionPerformed(java.awt.event.ActionEvent event) {
-					onLoadButtonClick();
+					//onLoadButtonClick();
 				}
 			});
 		}
 		return loadButton;
 	}
 
-	private void onLoadButtonClick() {
+	private void onLoadButtonClick(RandomAccessFile raf) {
 
-		String location = (String) getAddressComboBox().getSelectedItem();
+		String location = (String) getAddressComboBox(raf).getSelectedItem();
 		//System.out.println(location);
 		if (location.trim().equals("")) {
 			showError("No URL specified");
@@ -172,7 +176,8 @@ public class PlayerPanel extends JPanel {
 		setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
 		try {
-			getContainerPlayer().setMediaLocation(location, prefs.autoPlay);
+			System.out.println("here1");
+			getContainerPlayer().setMediaLocation(location, prefs.autoPlay, raf);
 		} catch (Throwable e) {
 
 			logger.log(Level.WARNING, "" + e, e);
@@ -230,7 +235,7 @@ public class PlayerPanel extends JPanel {
 			c2.fill = GridBagConstraints.HORIZONTAL;
 			c2.weightx = 1.0;
 			c2.insets = new Insets(0, 2, 0, 2);
-			addressPanel.add(getAddressComboBox(), c2);
+			addressPanel.add(getAddressComboBox(null), c2);
 			// GridBagConstraints c3 = new GridBagConstraints();
 			// addressPanel.add(getLoadButton(), c1);
 
@@ -446,7 +451,13 @@ public class PlayerPanel extends JPanel {
 		if (chooser.showOpenDialog(PlayerPanel.this) == JFileChooser.APPROVE_OPTION) {
 			final String urlStr = URLUtils.createUrlStr(chooser
 					.getSelectedFile());
-			addMediaLocatorAndLoad(urlStr);
+			try {
+				addMediaLocatorAndLoad(urlStr, new RandomAccessFile(chooser
+						.getSelectedFile(), "r"));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -474,7 +485,7 @@ public class PlayerPanel extends JPanel {
 	public void onOpenCaptureDevice() {
 		MediaLocator locator = CaptureDeviceBrowser.run(getParentFrame());
 		if (locator != null) {
-			addMediaLocatorAndLoad(locator.toExternalForm());
+			//addMediaLocatorAndLoad(locator.toExternalForm());
 		}
 	}
 
@@ -531,14 +542,14 @@ public class PlayerPanel extends JPanel {
 		String url = RTPReceivePanel.run(getParentFrame());
 		if (url == null)
 			return; // cancel
-		addMediaLocatorAndLoad(url);
+		//addMediaLocatorAndLoad(url);
 	}
 
 	public void onOpenURL() {
 		String url = URLPanel.run(getParentFrame());
 		if (url == null)
 			return; // cancel
-		addMediaLocatorAndLoad(url);
+		//addMediaLocatorAndLoad(url);
 	}
 
 	public void onAutoPlay(boolean value) {

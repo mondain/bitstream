@@ -4,7 +4,6 @@ import jBittorrentAPI.ExampleCreateTorrent;
 import jBittorrentAPI.ExamplePublish;
 import jBittorrentAPI.ExampleShareFiles;
 
-import java.awt.BorderLayout;
 import java.io.File;
 import java.util.Date;
 
@@ -15,11 +14,14 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout; //import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -28,6 +30,8 @@ public class CreateGUI extends SelectionAdapter {
 	private Shell shell = null;
 	private Text tField = null;
 	private Text trackerField = null;
+	private Text nameField = null;
+	Label label1 = null;
 
 	public static boolean shown = false;
 
@@ -46,29 +50,53 @@ public class CreateGUI extends SelectionAdapter {
 			}
 
 		});
-		shell.setLayout(new RowLayout(SWT.HORIZONTAL));
+		GridLayout gl = new GridLayout();
+		gl.numColumns = 2;
+		// shell.setLayout(new RowLayout(SWT.HORIZONTAL));
+		shell.setLayout(gl);
 		tField = new Text(shell, SWT.BORDER | SWT.SINGLE);
 		FontData fd = tField.getFont().getFontData()[0];
 		fd.setHeight(Constants.TEXT_HEIGHT);
 		Font font = new Font(shell.getDisplay(), fd);
 		tField.setFont(font);
 		tField.setToolTipText("Enter path of the torrent file");
-		tField.setLayoutData(new RowData(400, 21));
+		// tField.setLayoutData(new RowData(400, 21));
+		tField.setLayoutData(new GridData(400, 21));
+
+		Button bButton = new Button(shell, SWT.NONE);
+		bButton.setText("Browse");
+		bButton.setLayoutData(new GridData(70, SWT.DEFAULT));
+		bButton.addSelectionListener(this);
 
 		trackerField = new Text(shell, SWT.BORDER | SWT.SINGLE);
 		trackerField.setFont(font);
 		trackerField.setToolTipText("Enter URL of the tracker");
-		trackerField.setLayoutData(new RowData(400, 21));
-		
-		Button bButton = new Button(shell, SWT.NONE);
-		bButton.setText("Browse");
-		bButton.setLayoutData(new RowData(70, SWT.DEFAULT));
-		bButton.addSelectionListener(this);
+		GridData gd = new GridData(400, 21);
+		gd.horizontalSpan = 2;
+		trackerField.setLayoutData(gd);
+
+		nameField = new Text(shell, SWT.BORDER | SWT.SINGLE);
+		nameField.setFont(font);
+		nameField.setToolTipText("Enter name of the torrent file");
+		GridData gd2 = new GridData(400, 21);
+		gd2.horizontalSpan = 2;
+		nameField.setLayoutData(gd2);
 
 		Button okButton = new Button(shell, SWT.NONE);
 		okButton.setText("OK");
-		okButton.setLayoutData(new RowData(50, SWT.DEFAULT));
+		GridData gd3 = new GridData(100, SWT.DEFAULT);
+		gd3.horizontalSpan = 2;
+		gd3.horizontalAlignment = GridData.CENTER;
+		gd3.horizontalIndent = 2;
+		okButton.setLayoutData(gd3);
 		okButton.addSelectionListener(this);
+
+		label1 = new Label(shell, SWT.NONE);
+		GridData gd4 = new GridData();
+		gd4.horizontalSpan = 2;
+		gd4.horizontalAlignment = GridData.FILL;
+		gd4.horizontalIndent = 2;
+		label1.setLayoutData(gd4);
 
 		shell.pack();
 	}
@@ -96,21 +124,19 @@ public class CreateGUI extends SelectionAdapter {
 		return dialog.open();
 	}
 
-	public void doInBackground(String path, String tURL) {
-		String torrentPath = "example/client1/funvideo.torrent";
+	public void doInBackground(String path, String tURL, String torrentName) {
+		String torrentPath = "example/client1/" + torrentName;
 		String tracker = tURL + "/announce";
 		String publish = tURL + "/upload";
-		
+
 		System.out.println("tracker = " + tracker + "\npublish = " + publish);
 		// create torrent
-		String[] params = new String[] { torrentPath,
-				tracker , "256", path, "..",
-				"John Lynch", "..", "this is a fun video" };
+		String[] params = new String[] { torrentPath, tracker, "256", path,
+				"..", "John Lynch", "..", "this is a fun video" };
 		ExampleCreateTorrent.main(params);
 		// publish torrent
-		String[] params2 = new String[] { torrentPath,
-				publish, "none", "none",
-				"this is a fun video" };
+		String[] params2 = new String[] { torrentPath, publish, "none", "none",
+		"this is a fun video" };
 
 		ExamplePublish.main(params2);
 		// share the file
@@ -121,11 +147,20 @@ public class CreateGUI extends SelectionAdapter {
 
 	@Override
 	public void widgetSelected(SelectionEvent se) {
-		// TODO Auto-generated method stub
 		if (((Button) se.widget).getText().equals("OK")) {
 			final String path = tField.getText();
 			final String trackerURL = trackerField.getText();
+			final String torrentName = nameField.getText();
 			if (!(path.length() > 0)) {
+				label1.setText("Torrent file path can not be empty!");
+				return;
+			}
+			if (trackerURL.length() <= 0) {
+				label1.setText("Tracker URL can not be empty!");
+				return;
+			}
+			if (torrentName.length() <= 0) {
+				label1.setText("Please enter a torrent name!");
 				return;
 			}
 			// TODO: validate path here
@@ -134,7 +169,7 @@ public class CreateGUI extends SelectionAdapter {
 
 				@Override
 				public void run() {
-					doInBackground(path, trackerURL);
+					doInBackground(path, trackerURL, torrentName);
 				}
 			}).start();
 
@@ -156,5 +191,4 @@ public class CreateGUI extends SelectionAdapter {
 			tField.setText(path);
 		}
 	}
-
 }
