@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -18,13 +19,14 @@ import java.util.List;
 
 import javax.swing.Timer;
 
-public class MeshImpl implements PeerUpdateListener {
+public class MeshImpl {
 
 	private final static int port=2500;
 	private final static int updateTime=300000;
-	private LinkedHashMap<Peer,DLRate> peerRate=null;
+	private LinkedHashMap<Peer,DLRate> peerRate;
 	private LinkedHashMap<String,Peer> peers;
-	private LinkedHashMap<Peer, DLRate> otherPeersList;
+	private ArrayList<PeerEntry> otherPeersList;
+
 
 	Thread listener = new Thread(new Runnable() {
 		@Override
@@ -43,16 +45,18 @@ public class MeshImpl implements PeerUpdateListener {
 	});
 	Timer updatePeers;
 
-	public MeshImpl() {
+	public MeshImpl(LinkedHashMap<String, Peer> peer, LinkedHashMap<Peer, DLRate> peerRates) {
+		this.peers = peer;
+		this.peerRate = peerRates;
 		updatePeers = new Timer(60000, new ActionListener() {
 
 			boolean updated = false;
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				otherPeersList = new LinkedHashMap<Peer, DLRate>();
+				otherPeersList = new ArrayList<PeerEntry>();
 				List<Peer> l=new LinkedList<Peer>(peers.values());
 				for(Iterator<Peer> it = l.iterator(); it.hasNext();) {
-					final Peer p = it.next();
+					Peer p = it.next();
 					if(peerRate.get(p).getInterval() >= updateTime) {
 						updated = true;
 						try {
@@ -60,7 +64,10 @@ public class MeshImpl implements PeerUpdateListener {
 							InputStream is = s.getInputStream();
 							ObjectInputStream ois = new ObjectInputStream(is);
 							LinkedHashMap<Peer, DLRate> m = (LinkedHashMap<Peer, DLRate>) ois.readObject();
-							otherPeersList.putAll(m);
+							List<Peer> ml = new LinkedList<Peer>(m.keySet());
+							for(Peer temp : ml) {
+								otherPeersList.add(new PeerEntry(p, temp, m.get(temp)));
+							}
 							s.close();
 						} catch (UnknownHostException e) {
 							e.printStackTrace();
@@ -77,72 +84,108 @@ public class MeshImpl implements PeerUpdateListener {
 				}
 			}
 		});
-	}
-
-	/*
-	 * at this point you have recieved the peer lists for all peers and you
-	 * have to figure out if we need any new peers or not
-	 */
-	public void updateOwnPeers() {
 
 	}
 
-	@Override
-	public void updateFailed(int error, String message) {	
-		System.err.println(message);
-		System.err.flush();
-	}
-
-	@Override
-	public void updatePeerList(LinkedHashMap list) {
-
-		List<Peer> l=new LinkedList<Peer>(list.values());
-		peers=list;//a copy of the peers is also made that served another purpose in the below funtion
-		for (Iterator it = l.iterator(); it.hasNext();) {
-			Peer p = (Peer) it.next();
-			System.out.println("Size of peer List: "+list.size());
-			//if(p.getDLRate(false)>0.0){
-
-			System.out.print("Peer:"+p.toString()+" ");
-			System.out.println("Rate: "+p.getDLRate(true)/ (1024 * 10));
-			//	}
-			peerRate.put(p,new DLRate(p.getDLRate(false)));
+	private Peer getLowestSpeed() {
+		double speed = 1000000;
+		Peer temp;
+		Peer p = null;
+		List<Peer> l=new LinkedList<Peer>(peers.values());
+		Iterator<Peer> it = l.iterator();
+		if(it.hasNext()) {
+			temp = it.next();
+			speed = peerRate.get(temp).getSpeed();
+			p = temp;
 		}
-		System.out.println("Peer List updated from tracker with " + list.size()
-				+ " peers");
+		while(it.hasNext()) {
+			temp = it.next();
+			if(speed > peerRate.get(temp).getSpeed()) {
+				speed = peerRate.get(temp).getSpeed();
+				p = temp;
+			}
+		}
+		return p;
 
+	}
 
+	private PeerEntry getHighestSpeed() {
+		double speed = 0;
+		PeerEntry p = null;
+		for(PeerEntry temp : otherPeersList) {
+			if(speed < temp.getSpeed()) {
+				speed = temp.getSpeed();
+				p = temp;
+			}
+		}
+		return p;
+	}
+
+	public void updateOwnPeers() {
+		if(otherPeersList == null) {
+			return;
+		}
+
+		while(otherPeersList.size() != 0) {
+			PeerEntry in = getHighestSpeed();
+			Peer out = getLowestSpeed();
+
+			if(peerRate.get(out).getSpeed() < in.getSpeed()) {
+				if(peerRate.get(out).getSpeed() < peerRate.get(in.getParent()).getSpeed()) {
+					peers.remove(out);
+					peers.put(in.getChild().toString(), in.getChild());
+					peerRate.put(in.getChild(), in.getRate());	
+				}
+				else {
+					otherPeersList.remove(in);
+				}
+			}
+			else {
+				otherPeersList.remove(in);
+			}
+		}
 	}
 }
 
-class DLRate {
-	double speed;
-	long lastUpdate;
-	public DLRate(double s) {
-		speed = s;
-		this.lastUpdate = System.currentTimeMillis();
+class PeerEntry {
+	Peer parent;
+	Peer child;
+	DLRate rate;
+
+	public PeerEntry(Peer p, Peer c, DLRate r) {
+		parent = p;
+		child = c;
+		rate = r;
+	}
+
+	public Peer getParent() {
+		return parent;
+	}
+
+	public void setParent(Peer parent) {
+		this.parent = parent;
+	}
+
+	public Peer getChild() {
+		return child;
+	}
+
+	public void setChild(Peer child) {
+		this.child = child;
+	}
+
+	public DLRate getRate() {
+		return rate;
 	}
 
 	public double getSpeed() {
-		return speed;
+		return rate.getSpeed();
 	}
 
-	public void setSpeed(double speed) {
-		this.speed = speed;
-		this.lastUpdate = System.currentTimeMillis();
+	public void setRate(DLRate rate) {
+		this.rate = rate;
 	}
 
-	public void setLastUpdate() {
-		this.lastUpdate = System.currentTimeMillis();
-	}
-	
-	public long getLastUpdate() {
-		return lastUpdate;
-	}
-
-	public long getInterval() {
-		return System.currentTimeMillis() - this.lastUpdate;
-	}
 }
 
 class Send2Peer implements Runnable {

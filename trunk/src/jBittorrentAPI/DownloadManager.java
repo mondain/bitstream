@@ -92,14 +92,15 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	private LinkedHashMap<String, Peer> peerList = null;
 	private TreeMap<String, DownloadTask> task = null;
 	private LinkedHashMap<String, BitSet> peerAvailabilies = null;
-	private LinkedHashMap<Peer,Float> peerRate=null;
+	private LinkedHashMap<Peer,DLRate> peerRate=null;
 
 	// LinkedHashMap downloaders = new LinkedHashMap<String, Integer>(4);
 	LinkedHashMap unchoken = new LinkedHashMap<String, Integer>();
 	private long lastTrackerContact = 0;
 	private long lastUnchoking = 0;
 	private short optimisticUnchoke = 3;
-	private Thread t;
+	
+	MeshImpl mesh;
 
 	/**
 	 * Create a new manager according to the given torrent and using the client
@@ -113,7 +114,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	public DownloadManager(TorrentFile torrent, final byte[] clientID) {
 		this.clientID = clientID;
 		this.peerList = new LinkedHashMap<String, Peer>();
-		this.peerRate=new LinkedHashMap<Peer,Float>();
+		this.peerRate=new LinkedHashMap<Peer,DLRate>();
 		// this.peerList = new LinkedList<Peer>();
 		this.task = new TreeMap<String, DownloadTask>();
 		this.peerAvailabilies = new LinkedHashMap<String, BitSet>();
@@ -131,7 +132,8 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 		this.left = this.length;
 
 		this.checkTempFiles();
-
+		this.mesh = new MeshImpl(peerList, peerRate);
+		
 		/**
 		 * Construct all the pieces with the correct length and hash value
 		 */
@@ -913,6 +915,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 				if (!this.task.containsKey(key)) {
 					Peer p = (Peer) list.get(key);
 					this.peerList.put(p.toString(), p);
+					this.peerRate.put(p, new DLRate(p.getDLRate(false)));
 					this.connect(p);
 				}
 			}
