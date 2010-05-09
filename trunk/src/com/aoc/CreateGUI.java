@@ -98,14 +98,18 @@ public class CreateGUI extends SelectionAdapter {
 
 	public void doInBackground(String path, String tURL) {
 		String torrentPath = "example/client1/funvideo.torrent";
+		String tracker = tURL + "/announce";
+		String publish = tURL + "/upload";
+		
+		System.out.println("tracker = " + tracker + "\npublish = " + publish);
 		// create torrent
 		String[] params = new String[] { torrentPath,
-				tURL , "256", path, "..",
+				tracker , "256", path, "..",
 				"John Lynch", "..", "this is a fun video" };
 		ExampleCreateTorrent.main(params);
 		// publish torrent
 		String[] params2 = new String[] { torrentPath,
-				"http://localhost:8081/upload", "none", "none",
+				publish, "none", "none",
 				"this is a fun video" };
 
 		ExamplePublish.main(params2);
