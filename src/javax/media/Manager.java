@@ -1,6 +1,7 @@
 package javax.media;
 
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,10 +83,10 @@ public final class Manager {
 
 	public static Player createPlayer(java.net.URL sourceURL)
 			throws java.io.IOException, NoPlayerException {
-		return createPlayer(new MediaLocator(sourceURL));
+		return createPlayer(new MediaLocator(sourceURL), new RandomAccessFile(sourceURL.toString(),"r"));
 	}
 
-	public static Player createPlayer(MediaLocator sourceLocator)
+	public static Player createPlayer(MediaLocator sourceLocator, RandomAccessFile raf)
 			throws java.io.IOException, NoPlayerException {
 
 		final String protocol = sourceLocator.getProtocol();
@@ -95,10 +96,18 @@ public final class Manager {
 			try {
 				final Class dataSourceClass = Class
 						.forName(dataSourceClassName);
-				final DataSource dataSource = (DataSource) dataSourceClass
-						.newInstance();
+				/*
+				 * final DataSource dataSource = (DataSource) dataSourceClass.newInstance();
+				 * 
+				 * send the raf to the datasource
+				 */
+				System.out.println("here4");
+				//final DataSource dataSource = (DataSource) dataSourceClass.newInstance();
+				final net.sf.fmj.media.protocol.file.DataSource dataSource = new net.sf.fmj.media.protocol.file.DataSource();
 				dataSource.setLocator(sourceLocator);
-				dataSource.connect();
+				dataSource.connect(raf);
+				//dataSource.connect();
+				
 				return createPlayer(dataSource);
 
 				// TODO: JMF seems to disconnect data sources in this method,
@@ -236,7 +245,7 @@ public final class Manager {
 	public static Player createRealizedPlayer(MediaLocator ml)
 			throws java.io.IOException, NoPlayerException,
 			CannotRealizeException {
-		final Player player = createPlayer(ml);
+		final Player player = createPlayer(ml, new RandomAccessFile(ml.toExternalForm(), "r"));
 		blockingRealize(player);
 		return player;
 	}

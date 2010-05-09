@@ -48,7 +48,7 @@ public class DataSource extends PullDataSource implements SourceCloneable {
 		d.setLocator(getLocator());
 		if (connected) {
 			try {
-				d.connect();
+				d.connect(raf);
 			} catch (IOException e) {
 				logger.log(Level.WARNING, "" + e, e);
 				return null; // according to the API, return null on failure.
@@ -65,7 +65,7 @@ public class DataSource extends PullDataSource implements SourceCloneable {
 
 	private long contentLength = -1;
 
-	public void connect() throws IOException {
+	public void connect(RandomAccessFile raf) throws IOException {
 		// we allow a re-connection even if we are connected, due to an oddity
 		// in the way Manager works. See comments there
 		// in createPlayer(MediaLocator sourceLocator).
@@ -79,7 +79,7 @@ public class DataSource extends PullDataSource implements SourceCloneable {
 								+ getLocator().toExternalForm());
 
 			// logger.fine("Path: " + path);
-			raf = new RandomAccessFile(path, "r");
+			this.raf = raf;
 			contentLength = raf.length();
 
 			String s = getContentTypeFor(path); // TODO: use our own mime
@@ -229,5 +229,42 @@ public class DataSource extends PullDataSource implements SourceCloneable {
 				throw new RuntimeException(e);
 			}
 		}
+	}
+
+	@Override
+	public void connect() throws IOException {
+		// we allow a re-connection even if we are connected, due to an oddity
+		// in the way Manager works. See comments there
+		// in createPlayer(MediaLocator sourceLocator).
+
+		try {
+			final String path = URLUtils
+					.extractValidPathFromFileUrl(getLocator().toExternalForm());
+			if (path == null)
+				throw new IOException(
+						"Cannot determine valid file path from URL: "
+								+ getLocator().toExternalForm());
+
+			// logger.fine("Path: " + path);
+			this.raf = raf;
+			contentLength = raf.length();
+
+			String s = getContentTypeFor(path); // TODO: use our own mime
+												// mapping
+			if (s == null)
+				throw new IOException("Unknown content type for path: " + path);
+			// TODO: what is the right place to apply
+			// ContentDescriptor.mimeTypeToPackageName?
+			contentType = new ContentDescriptor(ContentDescriptor
+					.mimeTypeToPackageName(s));
+			sources = new RAFPullSourceStream[1];
+			sources[0] = new RAFPullSourceStream();
+
+			connected = true;
+		} catch (IOException e) {
+			logger.log(Level.WARNING, "" + e, e);
+			throw e;
+		}
+		
 	}
 }

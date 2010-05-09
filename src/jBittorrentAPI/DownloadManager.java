@@ -99,7 +99,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	private long lastTrackerContact = 0;
 	private long lastUnchoking = 0;
 	private short optimisticUnchoke = 3;
-	
+	boolean start;
 	MeshImpl mesh;
 
 	/**
@@ -112,6 +112,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	 *            byte[]
 	 */
 	public DownloadManager(TorrentFile torrent, final byte[] clientID) {
+		start = true;
 		this.clientID = clientID;
 		this.peerList = new LinkedHashMap<String, Peer>();
 		this.peerRate=new LinkedHashMap<Peer,DLRate>();
@@ -314,7 +315,10 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 		for (int i = 0; i < this.nbOfFiles; i++) {
 			File temp = new File(saveas + ((String) (this.torrent.name.get(i))));
 			try {
-				this.output_files[i] = new RandomAccessFile(temp, "rw");
+				this.output_files[i] = new RandomAccessFile(temp, "rwd");
+				
+				System.out.println("path -> " + saveas + ((String) (this.torrent.name.get(i))) + " has been created");
+				
 				this.output_files[i].setLength((Integer) this.torrent.length
 						.get(i));
 			} catch (IOException ioe) {
@@ -350,6 +354,9 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 						.write(data, data.length - remainingData,
 								(remaining < remainingData) ? remaining
 										: remainingData);
+				this.output_files[file.intValue()].getChannel().force(true);
+				System.out.println("----------> piece " + piece + " written to file");
+				
 				remainingData -= remaining;
 			} catch (IOException ioe) {
 				System.err.println(ioe.getMessage());
@@ -503,7 +510,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 		}
 		return s;
 	}
-
+	
 	/**
 	 * Returns the index of the piece that could be downloaded by the peer in
 	 * parameter
@@ -538,7 +545,15 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 			//	Random r = new Random(System.currentTimeMillis());
 			//	index = possible.get(r.nextInt(possible.size()));
 			
-				index = possible.get(0);
+				if(start) {
+					index = possible.get(possible.size()-1);
+					if(nbPieces - possible.size() == 5) {
+						start = false;
+					}
+				}
+				else {
+					index = possible.get(0);
+				}
 				System.out.println("Index: "+index);
 				
 				this.setRequested(index, true);
@@ -607,6 +622,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	public void setTotal(float total) {
 		this.totaldl = total;
 	}
+	
 	public synchronized void pieceCompleted(String peerID, int i,
 			boolean complete) {
 		synchronized (this.isRequested) {

@@ -59,9 +59,6 @@ public class CoolMenuBar {
 		final ArrayList<String> labels = new ArrayList<String>();
 		labels.add("Play");
 		labels.add("Delete");
-		labels.add("dummy");
-		labels.add("dummy");
-		labels.add("dummy");
 
 		for (int i = 0; i < labels.size(); i++) {
 			ToolItem item = new ToolItem(toolBar, SWT.PUSH);
@@ -78,11 +75,11 @@ public class CoolMenuBar {
 					case 0:
 						System.out.println("Play selected");
 						Download d = Main
-								.getInstance()
-								.getDownloadTable()
-								.getDownload(
-										Main.getInstance().getDownloadTable()
-												.getTable().getSelectionIndex());
+						.getInstance()
+						.getDownloadTable()
+						.getDownload(
+								Main.getInstance().getDownloadTable()
+								.getTable().getSelectionIndex());
 						if (d == null) {
 							System.err.println("Error: No Download selected or Error in Download -- returning");
 							return;

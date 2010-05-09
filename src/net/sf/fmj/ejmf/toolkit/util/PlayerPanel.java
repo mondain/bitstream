@@ -3,6 +3,7 @@ package net.sf.fmj.ejmf.toolkit.util;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import javax.media.Manager;
 import javax.media.MediaLocator;
@@ -74,7 +75,7 @@ public class PlayerPanel extends JPanel {
 	 */
 	public PlayerPanel(MediaLocator locator) throws IOException,
 			NoPlayerException {
-		player = Manager.createPlayer(locator);
+		player = Manager.createPlayer(locator, new RandomAccessFile(locator.toExternalForm(), "r"));
 
 		this.setLayout(new BorderLayout());
 		// this.setLayout(new BorderLayout());

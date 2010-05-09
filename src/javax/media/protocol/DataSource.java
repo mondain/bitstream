@@ -1,5 +1,7 @@
 package javax.media.protocol;
 
+import java.io.RandomAccessFile;
+
 import javax.media.Duration;
 import javax.media.MediaLocator;
 import javax.media.Time;
