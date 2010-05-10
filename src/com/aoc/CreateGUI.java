@@ -51,16 +51,18 @@ public class CreateGUI extends SelectionAdapter {
 
 		});
 		GridLayout gl = new GridLayout();
-		gl.numColumns = 2;
+		gl.numColumns = 3;
 		// shell.setLayout(new RowLayout(SWT.HORIZONTAL));
 		shell.setLayout(gl);
+
+		Label l1 = new Label(shell, SWT.None);
+		l1.setText("Source File: ");
 		tField = new Text(shell, SWT.BORDER | SWT.SINGLE);
 		FontData fd = tField.getFont().getFontData()[0];
 		fd.setHeight(Constants.TEXT_HEIGHT);
 		Font font = new Font(shell.getDisplay(), fd);
 		tField.setFont(font);
 		tField.setToolTipText("Enter path of the torrent file");
-		// tField.setLayoutData(new RowData(400, 21));
 		tField.setLayoutData(new GridData(400, 21));
 
 		Button bButton = new Button(shell, SWT.NONE);
@@ -68,6 +70,8 @@ public class CreateGUI extends SelectionAdapter {
 		bButton.setLayoutData(new GridData(70, SWT.DEFAULT));
 		bButton.addSelectionListener(this);
 
+		Label l2 = new Label(shell, SWT.None);
+		l2.setText("Tracker URL: ");
 		trackerField = new Text(shell, SWT.BORDER | SWT.SINGLE);
 		trackerField.setFont(font);
 		trackerField.setToolTipText("Enter URL of the tracker");
@@ -75,6 +79,8 @@ public class CreateGUI extends SelectionAdapter {
 		gd.horizontalSpan = 2;
 		trackerField.setLayoutData(gd);
 
+		Label l3 = new Label(shell, SWT.None);
+		l3.setText("Torrent Name: ");
 		nameField = new Text(shell, SWT.BORDER | SWT.SINGLE);
 		nameField.setFont(font);
 		nameField.setToolTipText("Enter name of the torrent file");

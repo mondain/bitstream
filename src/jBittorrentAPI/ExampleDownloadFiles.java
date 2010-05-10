@@ -37,6 +37,8 @@
 
 package jBittorrentAPI;
 
+import java.io.RandomAccessFile;
+
 
 /**
  * Simple example to show how it is possible to download files using bittorrent
@@ -58,8 +60,21 @@ public class ExampleDownloadFiles {
 
 	}
 
+	public void updateStream() {
+		if(dm != null) {
+			dm.updateStream();
+		}
+	}
+	
 	public ExampleDownloadFiles() {
 
+	}
+	
+	public RandomAccessFile getRAF() {
+		if(dm != null) {
+			return dm.getRAF();
+		}
+		return null;
 	}
 
 	public void DownloadFiles(String[] args) {
