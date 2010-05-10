@@ -17,6 +17,7 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -43,7 +44,14 @@ public class DownGUI extends SelectionAdapter {
 			}
 
 		});
+
 		shell.setLayout(new RowLayout(SWT.HORIZONTAL));
+
+		Label l1 = new Label(shell, SWT.None);
+		l1.setAlignment(SWT.CENTER);
+		l1.setLayoutData(new RowData(80, 27));
+		l1.setText("Torrent File: ");
+
 		tField = new Text(shell, SWT.BORDER | SWT.SINGLE);
 		FontData fd = tField.getFont().getFontData()[0];
 		fd.setHeight(Constants.TEXT_HEIGHT);
@@ -85,7 +93,7 @@ public class DownGUI extends SelectionAdapter {
 		dialog.setFilterPath(History.getInstance().getLastDownDir());
 		dialog.setFilterExtensions(new String[] { "*.torrent", "*.*" });
 		dialog.setFilterNames(new String[] { "Torrent Files (*.torrent)",
-				"All Files (*.*)" });
+		"All Files (*.*)" });
 		return dialog.open();
 	}
 

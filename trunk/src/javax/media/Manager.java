@@ -102,13 +102,21 @@ public final class Manager {
 				 * send the raf to the datasource
 				 */
 				System.out.println("here4");
-				//final DataSource dataSource = (DataSource) dataSourceClass.newInstance();
-				final net.sf.fmj.media.protocol.file.DataSource dataSource = new net.sf.fmj.media.protocol.file.DataSource();
-				dataSource.setLocator(sourceLocator);
-				dataSource.connect(raf);
-				//dataSource.connect();
+				if(raf == null) {
+					final DataSource dataSource = (DataSource) dataSourceClass.newInstance();
+					dataSource.setLocator(sourceLocator);
+					dataSource.connect();
+					return createPlayer(dataSource);
+				}
+				else {
+					final net.sf.fmj.media.protocol.file.DataSource dataSource = new net.sf.fmj.media.protocol.file.DataSource();
+					dataSource.setLocator(sourceLocator);
+					dataSource.connect(raf);
+					return createPlayer(dataSource);
+				}
+				//
 				
-				return createPlayer(dataSource);
+				
 
 				// TODO: JMF seems to disconnect data sources in this method,
 				// based on this stack trace:
@@ -176,8 +184,10 @@ public final class Manager {
 						&& !MediaProxy.class.isAssignableFrom(handlerClass))
 					continue; // skip any classes that will not be matched
 								// below.
-				final MediaHandler handler = (MediaHandler) handlerClass
-						.newInstance();
+				/*
+				 * made changes here
+				 */
+				final MediaHandler handler = (MediaHandler) handlerClass.newInstance();
 				handler.setSource(source);
 				if (handler instanceof Player) {
 					return (Player) handler;
@@ -230,6 +240,7 @@ public final class Manager {
 		}
 		// TODO: this is dangerous to re-use the same source for another player.
 		// this may actually cause it to re-use this source multiple times.
+		System.out.println("=============================> sending unknown contentType");
 		return createPlayer(source, "unknown");
 
 	}

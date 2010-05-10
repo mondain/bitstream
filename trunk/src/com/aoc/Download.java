@@ -2,6 +2,7 @@ package com.aoc;
 
 import jBittorrentAPI.ExampleDownloadFiles;
 
+import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -201,14 +202,35 @@ public class Download implements Serializable {
 				String toPlay = fileNames.get(list.getSelectionIndex());
 				System.out.println(toPlay);
 				System.out.println(downloadTo);
-				String absPath = "file:///" + downloadTo + toPlay;
+				String absPath = "file:///" + downloadTo + "stream" + toPlay;
+				if(edf != null) {
+					if(edf.getCompleted() >= 100) {
+						edf.updateStream();
+						absPath = "file:///" + downloadTo + toPlay;
+					}
+				}
+				//final String nonAbsPath = downloadTo + toPlay;
 				System.out.println("Path: " + absPath);
 				final String[] args = new String[] { absPath };
 				new Thread(new Runnable() {
 
 					@Override
 					public void run() {
-						net.sf.fmj.ui.FmjStudio.main(args);
+						try {
+							//new net.sf.fmj.ui.FmjStudio().run(args, new RandomAccessFile(nonAbsPath, "r"));
+							if(edf != null) {
+								if(edf.getRAF() != null) {
+									edf.getRAF().close();
+								}
+								new net.sf.fmj.ui.FmjStudio().run(args, null);
+							}
+							else {
+								new net.sf.fmj.ui.FmjStudio().run(args, null);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();		
+						}
+						
 					}
 
 				}).start();

@@ -38,6 +38,7 @@
 package jBittorrentAPI;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -60,19 +61,19 @@ import com.aoc.Download;
  * request to which peer.
  */
 public class DownloadManager implements DTListener, PeerUpdateListener,
-		ConListenerInterface {
+ConListenerInterface {
 
 	int numComplete = 0;
 	boolean downloadComplete = false;
-	
-	
+
+
 	// Client ID
 	private byte[] clientID;
 
 	public TorrentFile torrent = null;
 
 	private int maxConnectionNumber = 100;
-    
+
 	private int counter=0;
 	private int nbOfFiles = 0;
 	private long length = 0;
@@ -82,6 +83,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	private BitSet isRequested;
 	private int nbPieces;
 	private RandomAccessFile[] output_files;
+	private RandomAccessFile[] output_files_stream;
 
 	private PeerUpdater pu = null;
 	private ConnectionListener cl = null;
@@ -128,13 +130,14 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 		this.isComplete = new BitSet(nbPieces);
 		this.isRequested = new BitSet(nbPieces);
 		this.output_files = new RandomAccessFile[this.nbOfFiles];
+		this.output_files_stream = new RandomAccessFile[this.nbOfFiles];
 
 		this.length = this.torrent.total_length;
 		this.left = this.length;
 
 		this.checkTempFiles();
 		this.mesh = new MeshImpl(peerList, peerRate);
-		
+
 		/**
 		 * Construct all the pieces with the correct length and hash value
 		 */
@@ -149,8 +152,8 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 						.get(file))
 						&& i != this.nbPieces - 1) {
 					pieceoffset += ((Integer) (torrent.length.get(file)))
-							.intValue()
-							- fileoffset;
+					.intValue()
+					- fileoffset;
 					file++;
 					fileoffset = 0;
 					if (pieceoffset == this.torrent.pieceLength)
@@ -163,8 +166,8 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 			pieceList[i] = new Piece(i,
 					(i != this.nbPieces - 1) ? this.torrent.pieceLength
 							: ((Long) (this.length % this.torrent.pieceLength))
-									.intValue(), 16384,
-					(byte[]) torrent.piece_hash_values_as_binary.get(i), tm);
+							.intValue(), 16384,
+							(byte[]) torrent.piece_hash_values_as_binary.get(i), tm);
 			// System.out.println("Piece " + i + " is complete: " +
 			// this.testComplete(i));
 			if (this.testComplete(i)) {
@@ -179,8 +182,8 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 
 		//callRate_Collector();
 	}
-    
-	
+
+
 	public boolean getComplete() {
 		return this.downloadComplete;
 	}
@@ -234,10 +237,12 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 				if (download != null) {
 					download.setProgress(100);
 				}
+				System.out.println("Complete... saving to file");
+				closeTemp2Files();
 				String input = new IOManager()
-						.readUserInput("\r\n*****************************************\r\n"
-								+ "* Press ENTER to stop sharing the files *\r\n"
-								+ "*****************************************\n");
+				.readUserInput("\r\n*****************************************\r\n"
+						+ "* Press ENTER to stop sharing the files *\r\n"
+						+ "*****************************************\n");
 
 				if (input.length() > 0) {
 					System.out.println("returning");
@@ -292,12 +297,66 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	 * Close all open files
 	 */
 	public void closeTempFiles() {
+		System.out.println("closing all files");
 		for (int i = 0; i < this.output_files.length; i++)
 			try {
 				this.output_files[i].close();
+				//this.output_files_stream[i].close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+	}
+
+	public void closeTemp2Files() {
+		updateStream();
+		System.out.println("closing all files");
+		for (int i = 0; i < this.output_files_stream.length; i++)
+			try {
+				this.output_files_stream[i].close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	}
+
+	public RandomAccessFile getRAF() {
+		if(this.output_files_stream != null) {
+			System.out.println("output_file  != null");
+			return this.output_files_stream[0];
+		}
+		System.out.println("output_file  == null");
+		return null;
+	}
+
+	public void updateStream() {
+		closeTempFiles();
+		/*String saveas = Constants.SAVEPATH; // Should be configurable
+		saveas += this.torrent.saveAs + "/";
+		new File(saveas).mkdirs();
+		System.out.println("saveas = " + saveas);
+		File temp2 = new File(saveas + "stream" +((String) (this.torrent.name.get(0))));
+		try {
+			output_files_stream[0] = new RandomAccessFile(temp2, "rws");
+
+			byte[] b = new byte[262144];
+			int i = 0;
+			output_files[0].seek(0);
+			int st = output_files[0].read(b);
+			while(st != -1) {
+				System.out.println("writing to file " + i);
+				output_files_stream[0].seek(i*262144);
+				output_files_stream[0].write(b);
+				i++;
+				output_files[0].seek(i*262144);
+				st = output_files[0].read(b);
+			}
+			
+			 * write to file once more if not working
+			 
+			output_files_stream[0].close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}*/
+
 	}
 
 	/**
@@ -314,12 +373,17 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 		new File(saveas).mkdirs();
 		for (int i = 0; i < this.nbOfFiles; i++) {
 			File temp = new File(saveas + ((String) (this.torrent.name.get(i))));
+			File temp2 = new File(saveas + "stream" +((String) (this.torrent.name.get(i))));
+
 			try {
-				this.output_files[i] = new RandomAccessFile(temp, "rwd");
-				
+				this.output_files[i] = new RandomAccessFile(temp, "rw");
+				this.output_files_stream[i] = new RandomAccessFile(temp2, "rws");
+
 				System.out.println("path -> " + saveas + ((String) (this.torrent.name.get(i))) + " has been created");
-				
+
 				this.output_files[i].setLength((Integer) this.torrent.length
+						.get(i));
+				this.output_files_stream[i].setLength((Integer) this.torrent.length
 						.get(i));
 			} catch (IOException ioe) {
 				System.err.println("Could not create temp files");
@@ -348,15 +412,21 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 						- ((Integer) (this.pieceList[piece].getFileAndOffset()
 								.get(file))).intValue();
 				this.output_files[file.intValue()]
-						.seek(((Integer) (this.pieceList[piece]
-								.getFileAndOffset().get(file))).intValue());
+				                  .seek(((Integer) (this.pieceList[piece]
+				                                                   .getFileAndOffset().get(file))).intValue());
+				this.output_files_stream[file.intValue()]
+				                         .seek(((Integer) (this.pieceList[piece]
+				                                                          .getFileAndOffset().get(file))).intValue());
 				this.output_files[file.intValue()]
-						.write(data, data.length - remainingData,
-								(remaining < remainingData) ? remaining
-										: remainingData);
-				this.output_files[file.intValue()].getChannel().force(true);
+				                  .write(data, data.length - remainingData,
+				                		  (remaining < remainingData) ? remaining
+				                				  : remainingData);
+				this.output_files_stream[file.intValue()]
+				                         .write(data, data.length - remainingData,
+				                        		 (remaining < remainingData) ? remaining
+				                        				 : remainingData);
 				System.out.println("----------> piece " + piece + " written to file");
-				
+
 				remainingData -= remaining;
 			} catch (IOException ioe) {
 				System.err.println(ioe.getMessage());
@@ -393,11 +463,11 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 								+ ((String) (this.torrent.name.get(i))));
 						fos.write(Utils.subArray(data, offset,
 								((Integer) (this.torrent.length.get(i)))
-										.intValue()));
+								.intValue()));
 						fos.flush();
 						fos.close();
 						offset += ((Integer) (this.torrent.length.get(i)))
-								.intValue();
+						.intValue();
 					} catch (IOException ioe) {
 						ioe.printStackTrace();
 						System.err.println("Error when saving the file "
@@ -510,7 +580,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 		}
 		return s;
 	}
-	
+
 	/**
 	 * Returns the index of the piece that could be downloaded by the peer in
 	 * parameter
@@ -542,9 +612,9 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 			// System.out.println(this.isRequested.cardinality()+" "+this.isComplete.cardinality()+" "
 			// + possible.size());
 			if (possible.size() > 0) {
-			//	Random r = new Random(System.currentTimeMillis());
-			//	index = possible.get(r.nextInt(possible.size()));
-			
+				//	Random r = new Random(System.currentTimeMillis());
+				//	index = possible.get(r.nextInt(possible.size()));
+
 				if(start) {
 					index = possible.get(possible.size()-1);
 					if(nbPieces - possible.size() == 5) {
@@ -555,11 +625,11 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 					index = possible.get(0);
 				}
 				System.out.println("Index: "+index);
-				
+
 				this.setRequested(index, true);
-				
+
 				return (index);
-				
+
 			}
 			return -1;
 		}
@@ -622,7 +692,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	public void setTotal(float total) {
 		this.totaldl = total;
 	}
-	
+
 	public synchronized void pieceCompleted(String peerID, int i,
 			boolean complete) {
 		synchronized (this.isRequested) {
@@ -639,15 +709,15 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 				for (Iterator it = this.task.keySet().iterator(); it.hasNext();)
 					try {
 						this.task.get(it.next()).ms
-								.addMessageToQueue(new Message_PP(
-										PeerProtocol.HAVE, Utils
-												.intToByteArray(i), 1));
+						.addMessageToQueue(new Message_PP(
+								PeerProtocol.HAVE, Utils
+								.intToByteArray(i), 1));
 					} catch (NullPointerException npe) {
 					}
-				System.out.println("Piece completed by " + peerID + " : " + i
-						+ " (Total dl = " + totaldl + "% )");
-				this.savePiece(i);
-				this.getPieceBlock(i, 0, 15000);
+					System.out.println("Piece completed by " + peerID + " : " + i
+							+ " (Total dl = " + totaldl + "% )");
+					this.savePiece(i);
+					this.getPieceBlock(i, 0, 15000);
 
 			} else {
 
@@ -686,7 +756,7 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 	 * rate, in a try to find a better source
 	 */
 	private synchronized void unchokePeers() {
-		
+
 		synchronized (this.task) {
 			int nbNotInterested = 0;
 			int nbDownloaders = 0;
@@ -806,11 +876,11 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 			DownloadTask dt = this.task.get(peerID);
 			if (dt != null) {
 				dt.ms
-						.addMessageToQueue(new Message_PP(PeerProtocol.PIECE,
-								Utils.concat(Utils.intToByteArray(piece), Utils
-										.concat(Utils.intToByteArray(begin),
-												this.getPieceBlock(piece,
-														begin, length)))));
+				.addMessageToQueue(new Message_PP(PeerProtocol.PIECE,
+						Utils.concat(Utils.intToByteArray(piece), Utils
+								.concat(Utils.intToByteArray(begin),
+										this.getPieceBlock(piece,
+												begin, length)))));
 				dt.peer.setULRate(length);
 			}
 			dt = null;
@@ -846,12 +916,12 @@ public class DownloadManager implements DTListener, PeerUpdateListener,
 						- ((Integer) (this.pieceList[piece].getFileAndOffset()
 								.get(file))).intValue();
 				this.output_files[file.intValue()]
-						.seek(((Integer) (this.pieceList[piece]
-								.getFileAndOffset().get(file))).intValue());
+				                  .seek(((Integer) (this.pieceList[piece]
+				                                                   .getFileAndOffset().get(file))).intValue());
 				this.output_files[file.intValue()]
-						.read(data, data.length - remainingData,
-								(remaining < remainingData) ? remaining
-										: remainingData);
+				                  .read(data, data.length - remainingData,
+				                		  (remaining < remainingData) ? remaining
+				                				  : remainingData);
 				remainingData -= remaining;
 			} catch (IOException ioe) {
 				System.err.println(ioe.getMessage());
