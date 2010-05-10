@@ -308,7 +308,7 @@ ConListenerInterface {
 	}
 
 	public void closeTemp2Files() {
-		updateStream();
+		//updateStream();
 		System.out.println("closing all files");
 		for (int i = 0; i < this.output_files_stream.length; i++)
 			try {
@@ -328,7 +328,7 @@ ConListenerInterface {
 	}
 
 	public void updateStream() {
-		closeTempFiles();
+		//closeTemp2Files();
 		/*String saveas = Constants.SAVEPATH; // Should be configurable
 		saveas += this.torrent.saveAs + "/";
 		new File(saveas).mkdirs();
